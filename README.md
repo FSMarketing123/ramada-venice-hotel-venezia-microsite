@@ -5,28 +5,16 @@ Ramada Venice Hotel Venezia, Venice, Florida.
 
 **Source site:** https://ramadavenicehotelvenezia.hodgeswardelliott.com/ (Squarespace)
 
-## Going live
+## Live
 
-Staged at **https://fsmarketing123.github.io/ramada-venice-hotel-venezia-microsite/**
-while `ramadavenicehotelvenezia.hodgeswardelliott.com` still resolves to
-Squarespace.
+**https://ramadavenicehotelvenezia.hodgeswardelliott.com/** — GitHub Pages from
+`main` at root, DNS cut over from Squarespace, HTTPS enforced.
 
-The `CNAME` file is deliberately **not** committed — it is held as
-`CNAME.pending`. GitHub Pages reads that file to set the custom domain and then
-redirects the `github.io` URL to it, so committing it before DNS moves would
-send every preview straight back to the Squarespace site and leave this build
-invisible.
-
-To cut over, once DNS for the subdomain points at GitHub Pages:
-
-```bash
-git mv CNAME.pending CNAME && git commit -m "Point the site at the custom domain" && git push
-```
-
-Every asset path in `index.html` is relative, so the site serves correctly from
-the `/ramada-venice-hotel-venezia-microsite/` subpath and from the domain root
-without changes. Only `<link rel="canonical">` and the Open Graph URLs name the
-final domain, which is what they should say either way.
+Every asset path in `index.html` is relative, so the site served correctly from
+the `fsmarketing123.github.io/ramada-venice-hotel-venezia-microsite/` subpath
+while it was staged and serves correctly from the domain root now, unchanged.
+`<link rel="canonical">` and the Open Graph URLs name the domain, which was
+already right in both cases.
 
 ## Stack
 
@@ -36,7 +24,7 @@ GitHub Pages from `main`.
 
 ```
 index.html          single page, all sections
-CNAME.pending       custom domain, held back until DNS cuts over — see Going live
+CNAME               custom domain
 .nojekyll           bypass Jekyll processing
 assets/
   *.webp            photography, demand map, legend, ground textures
