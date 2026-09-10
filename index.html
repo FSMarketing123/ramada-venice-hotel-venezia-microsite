@@ -317,16 +317,13 @@ p:last-child{margin-bottom:0}
    DOM, so it needs no build step or framework like the rest of the page. The
    geometry helpers below are a direct translation of lib/map-geometry.ts; the
    palette and type are the site's rather than the kit's. */
-/* The map panel carries the reference map's own aspect, so the component's
-   height follows its width and the base map fills the panel with no letterbox.
-   The legend is taken out of flow rather than made a grid column: as a grid
-   item its 18 cards are intrinsic content, and an auto row would size itself to
-   them — stretching the block to twice the panel's height and stranding the map
-   in dead space. Positioned, it contributes nothing to layout and simply fills
-   the height the panel sets, scrolling its own list. */
+/* Map above, demand-driver table across the full width beneath it. The panel
+   carries the reference map's own aspect, so its height follows its width and
+   the base map fills it with no letterbox. Stacking the two also means the
+   table's cards never fight the panel for height the way a side column did. */
 .imap{position:relative;border:1px solid #d8e3e4;background:#deebec;overflow:hidden;
   color:#252d31;font-size:14px;line-height:1.45}
-.imap-panel{aspect-ratio:1856/1334;min-height:620px;margin-right:352px}
+.imap-panel{aspect-ratio:1856/1334;min-height:620px}
 .imap button{font:inherit;cursor:pointer;font-family:inherit}
 .imap button:focus-visible,.imap-canvas:focus-visible{outline:3px solid var(--crimson);outline-offset:-3px}
 .imap button:disabled{cursor:default;opacity:.4}
@@ -367,10 +364,6 @@ p:last-child{margin-bottom:0}
 .imap-marker.star::after{display:none}
 @keyframes imap-pulse{0%{transform:scale(.9);opacity:.75}75%,100%{transform:scale(1.65);opacity:0}}
 
-.imap-caption{position:absolute;top:20px;left:22px;background:#ffffffef;border:1px solid #e0e8e8;
-  border-radius:4px;padding:11px 13px;display:flex;align-items:center;gap:9px;
-  font-size:10px;font-weight:600;letter-spacing:.11em;pointer-events:none;z-index:4}
-.imap-dot{width:6px;height:6px;background:var(--crimson);border-radius:50%}
 .imap-tools{position:absolute;right:20px;top:20px;display:flex;flex-direction:column;
   border:1px solid #d9e1e2;background:#fff;box-shadow:0 4px 18px #273b3912;border-radius:6px;padding:4px;z-index:4}
 .imap-tool{width:38px;height:38px;border:0;border-radius:3px;background:none;color:#293a3e;
@@ -394,8 +387,7 @@ p:last-child{margin-bottom:0}
   background:none;color:#40545a;pointer-events:auto;display:grid;place-items:center}
 
 /* ---- legend ---- */
-.imap-legend{position:absolute;top:0;right:0;bottom:0;width:352px;background:#fff;
-  display:flex;flex-direction:column;min-height:0;border-left:1px solid #d8e3e4}
+.imap-legend{background:#fff;display:flex;flex-direction:column;border-top:1px solid #d8e3e4}
 .imap-legend-top{padding:22px 20px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .imap-legend-top h4{font-size:22px;margin:6px 0 0;font-weight:500;letter-spacing:-.02em;line-height:1.2}
 .imap-count{flex:none;border:1px solid #f0c4ce;border-radius:50%;width:36px;height:36px;color:var(--crimson);
@@ -403,13 +395,13 @@ p:last-child{margin-bottom:0}
 .imap-legend-head{background:var(--crimson);color:#fff;display:grid;grid-template-columns:40px 1fr;
   gap:8px;padding:12px 20px;font-weight:600;font-size:13px}
 .imap-legend-head>span:first-child{text-align:center}
-.imap-legend-list{overflow:auto;scrollbar-width:thin;scrollbar-color:#d6b7bf transparent;flex:1;
-  min-height:0;padding:14px;background:#f3f6f6}
+/* Every card visible at once rather than a scrolling column. */
+.imap-legend-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+  gap:10px;padding:14px;background:#f3f6f6}
 .imap-row{position:relative;width:100%;min-height:70px;display:grid;grid-template-columns:36px minmax(0,1fr);
   gap:12px;text-align:left;align-items:center;border:1px solid #e0e5e6;border-radius:10px;background:#fff;
-  margin:0 0 10px;padding:12px 14px;color:#30383b;font-size:14px;line-height:1.35;
+  padding:12px 14px;color:#30383b;font-size:14px;line-height:1.35;
   box-shadow:0 2px 4px #273c3e06;transition:background .15s,border-color .15s}
-.imap-row:last-child{margin-bottom:0}
 .imap-row:hover,.imap-row.highlight{border-color:#e3a5b5;background:#fff5f7;box-shadow:0 3px 9px #7f163c10}
 .imap-row.active{border-color:var(--crimson);box-shadow:inset 3px 0 var(--crimson),0 3px 9px #7f163c10;padding-right:24px}
 .imap-num{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;
@@ -424,13 +416,12 @@ p:last-child{margin-bottom:0}
   gap:6px;font-size:12px;color:#515f65}
 .imap-legend-bottom small{color:#7b878c;font-size:12px;line-height:1.4}
 
-@media (max-width:1100px){.imap-panel{margin-right:300px}.imap-legend{width:300px}}
+
 @media (max-width:900px){
-  .imap-panel{aspect-ratio:auto;height:52vh;min-height:360px;margin-right:0}
-  .imap-legend{position:static;width:auto}
+  .imap-panel{aspect-ratio:auto;height:52vh;min-height:360px}
+  .imap-legend-list{grid-template-columns:1fr}
   .imap-legend{border-left:0;border-top:1px solid #d8e3e4}
   .imap-legend-list{overflow:visible;max-height:none}
-  .imap-caption{top:14px;left:14px;max-width:calc(100% - 90px)}
   .imap-tools{right:14px;top:14px}
   .imap-foot{left:14px;right:14px;font-size:11px}
   .imap-card{bottom:55px;left:14px;right:14px;padding:15px 38px 15px 12px;gap:11px}
@@ -580,25 +571,24 @@ p:last-child{margin-bottom:0}
 
 <!-- ==================================================== highlight — location -->
 <section class="sec sec-tex" id="hl-location">
-  <div class="fe" style="--rows-m:16;--rows-d:32">
+  <div class="fe" style="--rows-m:16;--rows-d:44">
     <div class="b" style="--m:1/2/5/10;--d:1/2/14/26;--z:1">
       <div class="panel panel-dark"></div>
     </div>
-    <div class="b on-panel on-panel-white" style="--m:3/2/5/10;--d:2/3/13/16;--z:2" data-anim="fade">
+    <div class="b on-panel on-panel-white" style="--m:3/2/5/10;--d:2/3/13/25;--z:2" data-anim="fade">
       <h3><strong>Premier Gulf Coast Location with Robust Leisure Demand</strong></h3>
       <p>The Ramada Venice Hotel Venezia benefits from a highly visible and accessible location along U.S. Highway 41, just two miles from Venice&rsquo;s acclaimed Gulf beaches and less than ten minutes from Interstate 75. Venice, known as the &ldquo;Shark Tooth Capital of the World,&rdquo; attracts visitors year-round with its pristine beaches, historic MainStreet, vibrant arts community, and numerous golf courses. The Hotel is eight minutes north of Venice Municipal Airport and only 35 minutes from Sarasota&ndash;Bradenton International Airport (SRQ), which accommodated over four million passengers in 2024, a 116% increase compared to record setting 2019. The broader Sarasota region further enhances the area&rsquo;s appeal, offering renowned cultural institutions, outdoor recreation, and major sporting events such as the Atlanta Braves&rsquo; Spring Training at CoolToday Park, located 20 minutes from the Property.</p>
     </div>
 
-    <div class="b imap-block" style="--m:5/2/17/10;--d:14/2/32/26;--z:3" data-anim="fade">
+    <div class="b imap-block" style="--m:5/2/17/10;--d:14/2/44/26;--z:3" data-anim="fade">
       <div class="imap">
         <section class="imap-panel" aria-label="Interactive map of Venice demand drivers">
           <div class="imap-canvas" id="imap-canvas" tabindex="0"
-               aria-label="Map of Venice, Florida. Select a marker to zoom to it. When zoomed in, drag or use the arrow keys to pan and the wheel to zoom. Plus and minus zoom, Escape resets.">
+               aria-label="Map of Venice, Florida. Select a marker to zoom to it, or click the map itself to reset. When zoomed in, drag or use the arrow keys to pan and the wheel to zoom. Plus and minus zoom, Escape resets.">
             <img class="imap-base" src="assets/map-venice.webp" draggable="false"
                  alt="Street and waterway map of Venice, Florida and the surrounding area">
             <svg class="imap-leaders" aria-hidden="true"></svg>
           </div>
-          <div class="imap-caption"><span class="imap-dot"></span>VENICE &amp; THE SURROUNDING AREA</div>
           <div class="imap-tools">
             <button class="imap-tool" type="button" data-imap="in" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
             <button class="imap-tool" type="button" data-imap="out" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
@@ -623,7 +613,7 @@ p:last-child{margin-bottom:0}
           <div class="imap-legend-head"><span>#</span><span>Demand Drivers</span></div>
           <div class="imap-legend-list" id="imap-legend"></div>
           <div class="imap-legend-bottom">
-            <span>Hover to preview. Click to zoom. Click again to reset.</span>
+            <span>Hover to preview. Click to zoom. Click the map to reset.</span>
             <small>Locations follow the supplied demand-driver map.</small>
           </div>
         </aside>
@@ -1018,14 +1008,6 @@ p:last-child{margin-bottom:0}
       selected = id;
       camera = focusCamera(places[id], board);
       render();
-      if (fromLegend) return;
-      /* Scroll the legend only, so the map stays put on a phone. */
-      var row = rowEls[id], list = row.parentElement;
-      if (list.scrollHeight > list.clientHeight) {
-        var r = row.getBoundingClientRect(), l = list.getBoundingClientRect();
-        if (r.top < l.top) list.scrollBy({ top: r.top - l.top - 8, behavior: 'smooth' });
-        else if (r.bottom > l.bottom) list.scrollBy({ top: r.bottom - l.bottom + 8, behavior: 'smooth' });
-      }
     }
 
     places.forEach(function (p, i) {
@@ -1067,8 +1049,14 @@ p:last-child{margin-bottom:0}
         { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2 });
       render();
     }, { passive: false });
+    /* Pressing the map anywhere but a marker resets it. The press is recorded
+       here and judged on release: a pointer that travelled more than 4px was a
+       pan, not a click, so it must not throw the view away. */
+    var press = null;
     canvas.addEventListener('pointerdown', function (e) {
-      if (camera.zoom <= 1 || e.target.closest('button')) return;
+      if (e.target.closest('button')) { press = null; return; }
+      press = { x: e.clientX, y: e.clientY };
+      if (camera.zoom <= 1) return;
       drag = { x: e.clientX, y: e.clientY, cx: camera.x, cy: camera.y };
       canvas.setPointerCapture(e.pointerId);
     });
@@ -1078,8 +1066,14 @@ p:last-child{margin-bottom:0}
                                                 y: drag.cy + e.clientY - drag.y }, board);
       render();
     });
-    canvas.addEventListener('pointerup', function () { drag = null; });
-    canvas.addEventListener('pointercancel', function () { drag = null; });
+    canvas.addEventListener('pointerup', function (e) {
+      drag = null;
+      if (!press) return;
+      var moved = Math.hypot(e.clientX - press.x, e.clientY - press.y);
+      press = null;
+      if (moved <= 4) reset();
+    });
+    canvas.addEventListener('pointercancel', function () { drag = null; press = null; });
 
     function render() {
       var fit = fitScale(board), scale = fit * camera.zoom;
@@ -1144,7 +1138,7 @@ p:last-child{margin-bottom:0}
       zoomOut.disabled = camera.zoom <= 1;
       document.getElementById('imap-zoom').textContent = Math.round(camera.zoom * 100) + '%';
       document.getElementById('imap-hint').textContent =
-        camera.zoom > 1 ? 'Drag to pan · Click again to reset' : 'Click a marker to zoom in';
+        camera.zoom > 1 ? 'Drag to pan · Click the map to reset' : 'Click a marker to zoom in';
 
       var activeId = hovered !== null ? hovered : selected;
       if (activeId === null) { card.hidden = true; }

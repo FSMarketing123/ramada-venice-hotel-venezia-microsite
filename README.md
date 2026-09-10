@@ -291,26 +291,36 @@ that the wheel is inert until the map is past 100%.
   section.
 - **The kit's masthead is dropped.** It repeated the hotel lockup and a "Demand
   drivers" title directly under the section's own heading panel. The legend
-  keeps its heading.
+  keeps its heading. The "VENICE & THE SURROUNDING AREA" caption over the map is
+  gone too.
+- **Clicking the map resets it.** The press is recorded on `pointerdown` and
+  judged on release: a pointer that travelled more than 4px was a pan, not a
+  click, so it does not throw the view away, and a press that started on a
+  marker is ignored outright.
+- **The legend's scroll-into-view is removed.** It existed to keep a selected
+  row visible in a scrolling column; the table no longer scrolls.
 - **Type and colour are the site's** — Poppins and `--crimson` (`#cc1e41`) in
   place of Arial/Georgia and the kit's `#ce1741`.
 - **The badge uses the site's existing `logo-venezia-white.svg`.** The kit's
   `hotel-logo.svg` has identical path data but carries a `#231f20` element;
   reusing the site's copy keeps the badge matching the hero.
 
-### The one layout trap
+### Layout
 
-`.imap-legend` is **positioned, not a grid column**. As a grid item its 18 cards
-are intrinsic content, so an auto row sizes itself to them — which stretched the
-block to 1708px against the map panel's 708px and stranded the map in 500px of
-dead space top and bottom. Positioned, the legend contributes nothing to layout
-height, fills whatever the panel sets, and scrolls its own list.
+Map first, demand-driver table across the full width beneath it — not the kit's
+352px side column. The table is a `repeat(auto-fill, minmax(258px, 1fr))` grid,
+so all 18 cards are on screen at once (four columns at 1440) instead of a
+scrolling list showing five at a time. One column below 900px.
 
 The panel takes `aspect-ratio: 1856/1334`, so the component's height follows its
-width and the base map fills the panel exactly — 985 × 708 at a 1440 viewport,
+width and the base map fills the panel exactly — 1337 × 961 at a 1440 viewport,
 no letterbox. `min-height: 620px` matches the kit's guidance for narrow
-desktops. Below 900px the panel switches to `52vh` (min 360) and the legend
-returns to flow beneath it, expanded rather than scrolling.
+desktops. Below 900px the panel switches to `52vh` (min 360).
+
+Stacking the two also sidesteps a trap the side-column version had: as a grid
+item the legend's 18 cards are intrinsic content, so an auto row sized itself to
+them — stretching the block to 1708px against the panel's 708px and stranding
+the map in 500px of dead space. Stacked, the two never compete for height.
 
 ### Assets
 
@@ -340,6 +350,14 @@ being a button.
 
 Both are disabled under `prefers-reduced-motion`, which renders the finished
 state immediately.
+
+## #hl-location copy
+
+The heading and the paragraph span the full panel rather than the left half —
+`--d:2/3/13/25` against the panel's `1/2/14/26`. That puts the measure at about
+1,150px at a 1440 viewport, roughly 155 characters a line, which is long for
+running text. Capping the paragraph alone (`max-width: 70ch`) while leaving the
+heading full width would fix that without changing the block.
 
 ## Assets
 
