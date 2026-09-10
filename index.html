@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ramada Venice Hotel Venezia</title>
+<meta name="description" content="Hodges Ward Elliott has been exclusively retained to offer for sale the Ramada Venice Hotel Venezia, a 146-key full-service hotel with over 10,500 square feet of flexible meeting and event space in Venice, Florida.">
+<link rel="canonical" href="https://ramadavenicehotelvenezia.hodgeswardelliott.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ramada Venice Hotel Venezia">
+<meta property="og:description" content="146-key full-service hotel on 5.6 acres in Venice, Florida — the only full-service lodging option within a 15-mile radius. Offered fee simple, unencumbered by management.">
+<meta property="og:url" content="https://ramadavenicehotelvenezia.hodgeswardelliott.com/">
+<meta property="og:image" content="https://ramadavenicehotelvenezia.hodgeswardelliott.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   Ramada Venice Hotel Venezia — Hodges Ward Elliott offering microsite.
+
+   Rebuilt from the Squarespace WXR export. The export's <style> blocks carry
+   the fluid-engine grid placement for every block, so the layout below is the
+   original's own grid-area values rather than an approximation: sections are
+   24 columns + 2 gutter columns on desktop, 8 + 2 on mobile, 11px gap, with a
+   row height of 2.15% of the container width. See README.md.
+   ========================================================================= */
+
+:root{
+  --crimson:#cc1e41;      /* darkAccent  hsl(347.93 74.36% 45.88%) */
+  --ink:#333;             /* black       hsl(0 0% 20%)             */
+  --light-accent:#eaeaea; /* lightAccent hsl(0 0% 91.76%)          */
+  --ground:#f6f5f5;       /* rgba(65,60,57,.05) over white         */
+
+  /* Grid. Squarespace's own formulae, with this site's own tokens rather than
+     the defaults the export falls back to: the gutter is 3vw and the site max
+     width 1600px, which is what sets the row height (verified against the live
+     build at 1024 / 1440 / 1920). */
+  --gap:11px;
+  --cell-max:calc((1600px - (var(--gap) * 23)) / 24);
+  --cell-max-m:calc((1600px - (var(--gap) * 7)) / 8);
+  --container-width:min(1600px, calc(100vw - 6vw));
+  --row-h:calc(var(--container-width) * 0.0215);
+
+  /* Vertical rhythm. Fitted to the source at 375 / 1440: the mobile and
+     desktop padding tokens differ, so each is a line through both points. */
+  --pad-lg:min(calc(39px + 3.89vw), 112px);
+  --pad-md:min(calc(23.6px + 2.36vw), 68px);
+  --pad-sm:min(calc(19.5px + 1.95vw), 56px);
+  --pad-xs:min(calc(5.9px + 0.59vw), 17px);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  font-weight:300;font-size:16px;line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+
+/* Both headings interpolate from the same 16px base; the slopes and the two
+   clamps are fitted to the live build measured at 375 / 1024 / 1440 / 1920,
+   where they land within a pixel across the whole range. */
+h2,h3{font-weight:500;margin:0}
+h2{font-size:clamp(33.54px, calc(16px + 2.16vw), 50.56px);line-height:1.3}
+h3{font-size:clamp(27.69px, calc(16px + 1.44vw), 39.04px);line-height:1.333}
+p{margin:0 0 1.2em}
+p:last-child{margin-bottom:0}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--crimson);color:#fff;padding:12px 20px;z-index:100}
+.skip:focus{left:0}
+
+/* ---------------------------------------------------------------- sections */
+/* isolation:isolate does two jobs at once. It makes the section a stacking
+   context, so the z-index:-1 background layers below stay inside it instead of
+   escaping to the root and being painted over by the section's own colour; and
+   it makes the section the blending group root, so a band panel's mix-blend-mode
+   resolves against this ground. Putting the z-index on .fe instead would isolate
+   the panels from that ground and wash the bands out. */
+.sec{position:relative;isolation:isolate;padding:var(--pad-lg) 0}
+.sec-hero{padding:0}
+.sec-intro{padding:var(--pad-md) 0}
+.sec-banner{padding:var(--pad-xs) 0}
+.sec-footer{padding:var(--pad-sm) 0}
+.sec-dark{background:var(--ink);color:#fff}
+
+/* Full-bleed photographic ground plus its tint. Both live on the section's own
+   pseudo-elements so the grid above them needs no extra wrapper. They sit at
+   z-index:-1 rather than 0 so that .fe below needs no z-index of its own — see
+   the note there. */
+.sec-bg::before,.sec-bg::after{content:"";position:absolute;inset:0;z-index:-1}
+.sec-bg::before{
+  background-image:var(--bg);background-size:cover;
+  background-position:var(--bg-pos, 50% 50%);
+}
+.sec-bg::after{background:var(--ink);opacity:var(--tint, 0)}
+
+/* ------------------------------------------------------------------- grid */
+.fe{
+  /* Deliberately NOT a stacking context. The band panels below blend with the
+     section's ground, and a z-index here would isolate them from it — which
+     renders the panel against transparent black and washes out the whole band. */
+  display:grid;position:relative;
+  gap:var(--gap);
+  grid-template-columns:
+    minmax(calc(6vw - var(--gap)), 1fr)
+    repeat(8, minmax(0, var(--cell-max-m)))
+    minmax(calc(6vw - var(--gap)), 1fr);
+  grid-template-rows:repeat(var(--rows-m), minmax(24px, auto));
+  overflow-x:clip;
+}
+@media (min-width:768px){
+  .fe{
+    grid-template-columns:
+      minmax(calc(3vw - var(--gap)), 1fr)
+      repeat(24, minmax(0, var(--cell-max)))
+      minmax(calc(3vw - var(--gap)), 1fr);
+    grid-template-rows:repeat(var(--rows-d), minmax(var(--row-h), auto));
+  }
+}
+/* --z carries the source's own per-block z-index. It is not decoration: a
+   band panel uses mix-blend-mode, which makes it form a stacking context, and
+   a stacking context with z-index:auto paints *above* its un-layered siblings.
+   Without these the panels land on top of the copy and the photographs. */
+.b{grid-area:var(--m);min-width:0;z-index:var(--z,auto)}
+@media (min-width:768px){.b{grid-area:var(--d)}}
+
+/* An image block fills its cell, as the fluid engine's do. Four of them are
+   set to "fit" rather than "fill" in the source and so letterbox instead of
+   cropping — the demand legend most importantly, whose index numbers run to
+   the left edge and are lost under a crop. */
+.b-img{overflow:hidden;display:flex}
+.b-img img{width:100%;height:100%;object-fit:cover}
+.b-fit img{object-fit:contain}
+
+/* ------------------------------------------------------------------ panels
+   The source builds each coloured band as an empty text block sitting behind
+   the copy, tinted and blended. Keeping it a separate element matters: the
+   blend must not apply to the text on top of it. */
+.panel{width:100%;height:100%}
+.panel-crimson{background:var(--crimson)}
+.panel-crimson-84{background:rgba(204,30,65,.84)}
+.panel-dark{background:rgba(51,51,51,.93);mix-blend-mode:hard-light}
+.panel-light{background:rgba(234,234,234,.93);mix-blend-mode:hard-light}
+
+/* Copy sitting on a band: centred vertically in its block and inset 3% of the
+   block width on every side. The heading's 32px bottom margin collapses with
+   the paragraph's 16px top margin, so the gap between them is 32, not 48 —
+   which is what reproduces the source's block heights exactly. */
+.on-panel{padding:3%;align-self:center}
+/* The panel's colour, not the section's, decides the copy colour: the light
+   bands in #hl-offering sit on a dark section, and the dark band in
+   #hl-location sits on a light one. */
+.on-panel-white{color:#fff}
+.on-panel-ink{color:var(--ink)}
+.on-panel h3{margin:0 0 32px}
+.on-panel p{margin:16px 0 0}
+
+/* --------------------------------------------------------------- masthead */
+.rule{border:0;border-top:1px solid rgba(255,255,255,.85);width:100%;margin:0;align-self:center}
+.b-hwe{display:flex;align-items:center;justify-content:center;padding:40px}
+.b-hwe img{width:100%;max-width:250px}
+.b-lockup{display:flex;align-items:center;justify-content:center}
+.b-lockup img{width:min(100%, 300px);height:auto;object-fit:contain}
+
+/* ---------------------------------------------------------------- buttons */
+.btn{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:clamp(52px, calc(36px + 2.29vw), 80px);
+  padding:10px clamp(22px, 2.41vw, 46px);
+  background:var(--crimson);color:#fff;text-decoration:none;
+  font-size:16px;font-weight:500;letter-spacing:.32px;line-height:1.25;
+  border-radius:6px;transition:background .2s ease, transform .2s ease;
+}
+.btn:hover,.btn:focus-visible{background:#b31a39;transform:translateY(-2px)}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* --------------------------------------------------------- property table */
+.prop-table{width:100%;border-collapse:collapse;color:#fff}
+.prop-table tr{border-bottom:1px solid #fff}
+.prop-table tr:last-child{border-bottom:0}
+.prop-table td{
+  padding:15px 7px 15px 10px;vertical-align:top;
+  font-size:16px;font-weight:700;line-height:1.375;text-transform:uppercase;
+}
+/* 207px is the source's rendered label cell — 190px of content plus its 17px
+   of padding — which is what makes "Complimentary Self-Service Parking" break
+   over three lines rather than two. */
+.prop-table td.pbold{width:207px;max-width:54%}
+.prop-table td:last-child{font-weight:400;text-transform:none}
+/* The source indents this list 40px, which leaves "Business Center" too little
+   room and overflows the cell rather than wrapping. 22px keeps all four items
+   on one line each inside the cell, which is how the source renders. */
+.prop-table ul{margin:16px 0;padding-left:22px}
+.prop-table li{font-weight:400}
+
+/* --------------------------------------------------------------- contacts */
+/* Flex columns rather than plain blocks: the source floats these, so no pair
+   of vertical margins collapses and the 20px gaps stack to the full 40. */
+.contacts{display:flex;flex-direction:column}
+.contacts-group{display:flex;flex-direction:column;margin:0 0 10px}
+.contacts-header{
+  margin:16px 0 10px;padding:20px 0 0;border-bottom:1px solid #fff;
+  font-size:16px;font-weight:300;line-height:1.5;letter-spacing:1.6px;text-transform:uppercase;
+}
+.contact{width:360px;max-width:100%;margin:20px 0;font-size:15.2px;line-height:1.25;letter-spacing:.304px}
+.contact b{font-weight:700}
+.contact a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.35)}
+.contact a:hover,.contact a:focus-visible{border-bottom-color:#fff}
+
+.b-footer-logo{display:flex;align-items:flex-start;justify-content:center;padding:40px 0}
+.b-footer-logo img{width:100%;max-width:250px}
+
+/* ------------------------------------------------------- headline plaque */
+.plaque{
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.85);border:2px solid #fff;padding:4% 3%;
+}
+.plaque h2{color:var(--crimson);text-align:center}
+
+/* --------------------------------------------------------- zoomable map */
+.zoom-wrap{overflow:hidden;cursor:zoom-in;touch-action:none;align-self:start}
+.zoom-wrap img{width:100%;height:auto;transition:transform .3s ease}
+.zoom-wrap.zoomed{cursor:zoom-out}
+.zoom-wrap.zoomed img{transform:scale(2)}
+
+/* ------------------------------------------------------------- animation
+   The source fades and scales blocks in as they cross the viewport. The
+   hidden state is gated behind a class the script adds, so the page still
+   renders in full if the script never runs. */
+.js-anim [data-anim]{opacity:0}
+.js-anim [data-anim="fade"]{transform:translateY(18px)}
+.js-anim [data-anim="scale"]{transform:scale(.94)}
+.js-anim [data-anim].shown{
+  opacity:1;transform:none;
+  transition:opacity 1.2s ease, transform 1.2s ease;
+  transition-delay:var(--delay, 0s);
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js-anim [data-anim]{opacity:1;transform:none;transition:none}
+  .btn{transition:none}
+  .btn:hover{transform:none}
+  .zoom-wrap img{transition:none}
+}
+
+/* ------------------------------------------------------------- mobile fix
+   On the source build every band panel collapses to a bare 59px bar under
+   768px while the copy it should sit behind reflows below it — which leaves
+   white text on the light ground of the property snapshot and the first
+   highlight, and dark text on the dark ground of the remaining four. The
+   panels are re-spanned over their own copy below. See README.md. */
+@media (max-width:767px){
+  .on-panel{padding:8% 7%}
+  .b-hwe{padding:24px}
+  .prop-table td{font-size:15px;padding:12px 6px 12px 8px}
+  .prop-table ul{padding-left:22px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main id="main">
+
+<!-- ======================================================== hero / masthead -->
+<section class="sec sec-hero sec-dark sec-bg" id="hero"
+         style="--bg:url('assets/hero-pool.webp')">
+  <div class="fe" style="--rows-m:16;--rows-d:28">
+    <div class="b" style="--m:1/2/2/10;--d:1/1/5/12;--z:2"><hr class="rule"></div>
+    <div class="b b-hwe" style="--m:2/2/8/10;--d:1/12/5/16;--z:1">
+      <img src="assets/hwe-white.svg" alt="Hodges Ward Elliott" width="250" height="96">
+    </div>
+    <div class="b" style="--m:8/2/9/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
+
+    <div class="b" style="--m:9/2/17/10;--d:8/11/17/17;--z:5">
+      <div class="panel panel-crimson-84"></div>
+    </div>
+    <div class="b b-lockup" style="--m:9/2/17/10;--d:8/11/17/17;--z:6">
+      <img src="assets/logo-venezia-white.svg" alt="Ramada by Wyndham — Hotel Venezia" width="300" height="293">
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= intro -->
+<section class="sec sec-intro" id="overview">
+  <div class="fe" style="--rows-m:11;--rows-d:10">
+    <div class="b" style="--m:1/2/8/10;--d:3/6/7/22;--z:0" data-anim="fade">
+      <p style="text-align:center">Hodges Ward Elliott (&ldquo;HWE&rdquo;) has been exclusively retained to offer for sale the <strong>Ramada Venice Hotel Venezia</strong> (the &ldquo;Hotel&rdquo; or &ldquo;Property&rdquo;), a <strong>146-key full-service hotel</strong> featuring <strong>over 10,500 square feet of flexible meeting and event space</strong> in the heart of Venice, Florida. Positioned on 5.6 acres along U.S. Highway 41, the Property offers excellent visibility and convenient access to Interstate 75 and Sarasota&ndash;Bradenton International Airport (SRQ). Just two miles from Venice&rsquo;s acclaimed Gulf beaches, the Hotel is ideally situated to capture demand from historic downtown Venice and South Sarasota&rsquo;s leisure, healthcare, and corporate sectors.</p>
+    </div>
+    <div class="b" style="--m:8/2/10/6;--d:8/7/10/13;--z:1" data-anim="fade">
+      <a class="btn" href="https://secure.rightsignature.com/templates/a8360ae7-2340-414e-860a-56303bbf81ae/template-signer-link/4163d5d0c4a3346a57607b79e2631e57">Sign Confidentiality Agreement</a>
+    </div>
+    <div class="b" style="--m:10/2/12/6;--d:8/15/10/21;--z:2" data-anim="fade">
+      <a class="btn" href="assets/Ramada-Venice-Hotel-Venezia-CA.docx" download>Download Confidentiality Agreement</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= photographic band -->
+<section class="sec sec-dark sec-bg" aria-hidden="true"
+         style="--bg:url('assets/divider-beach.webp');--bg-pos:49.3% 32%">
+  <div class="fe" style="--rows-m:1;--rows-d:13;min-height:clamp(429px, 35.4vw, 700px)"></div>
+</section>
+
+<!-- ====================================================== property snapshot -->
+<section class="sec" id="property" aria-label="Property snapshot">
+  <div class="fe" style="--rows-m:44;--rows-d:38">
+    <div class="b" style="--m:1/2/15/10;--d:1/2/31/11;--z:4">
+      <div class="panel panel-crimson"></div>
+    </div>
+    <div class="b b-lockup" style="--m:3/2/9/10;--d:3/4/11/9;--z:6" data-anim="scale">
+      <img src="assets/logo-venezia-white.svg" alt="Ramada by Wyndham — Hotel Venezia" width="270" height="264">
+    </div>
+    <div class="b" style="--m:9/2/15/10;--d:11/3/30/10;--z:5" data-anim="fade">
+      <table class="prop-table">
+        <tbody>
+          <tr><td class="pbold">Address</td><td><span style="white-space:nowrap">425 U.S. 41 Bypass N</span> <span style="white-space:nowrap">Venice,&nbsp;FL&nbsp;34285</span></td></tr>
+          <tr><td class="pbold">Keys</td><td>146</td></tr>
+          <tr><td class="pbold">Year Opened</td><td>1975</td></tr>
+          <tr><td class="pbold">Year Renovated</td><td>2019</td></tr>
+          <tr><td class="pbold">Event Space</td><td>10,500 SF</td></tr>
+          <tr><td class="pbold">Food &amp; Beverage</td><td>Wave Grille</td></tr>
+          <tr><td class="pbold">Amenities</td><td><ul><li>Outdoor Pool</li><li>Hot Tub</li><li>Fitness Center</li><li>Business Center</li></ul></td></tr>
+          <tr><td class="pbold">Site Area</td><td>5.64 AC</td></tr>
+          <tr><td class="pbold">Parking</td><td>Complimentary Self-Service Parking</td></tr>
+          <tr><td class="pbold">Management</td><td>Unencumbered</td></tr>
+          <tr><td class="pbold">Brand</td><td>Ramada by Wyndham</td></tr>
+          <tr><td class="pbold">Interest</td><td>Fee-Simple</td></tr>
+          <tr><td class="pbold">Labor</td><td>Non-Union</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="b b-img" style="--m:21/2/27/10;--d:1/11/17/26;--z:7" data-anim="fade">
+      <img style="object-position:71.58% 63.2%" src="assets/snap-02.webp" alt="The hotel's outdoor pool deck, lined with loungers and palms" loading="lazy" width="1800" height="1200">
+    </div>
+    <div class="b b-img" style="--m:27/2/33/10;--d:17/11/31/26;--z:8" data-anim="fade">
+      <img src="assets/snap-03.webp" alt="Guestroom with two queen beds and a seating area" loading="lazy" width="1800" height="1200">
+    </div>
+    <div class="b b-img b-fit" style="--m:15/2/21/10;--d:31/2/39/10;--z:9" data-anim="fade">
+      <img src="assets/snap-01.webp" alt="Exterior of the Ramada Venice Hotel Venezia" loading="lazy" width="1400" height="934">
+    </div>
+    <div class="b b-img b-fit" style="--m:33/2/39/10;--d:31/10/39/18;--z:10" data-anim="fade">
+      <img src="assets/snap-04.webp" alt="Hotel lobby seating area" loading="lazy" width="1400" height="934">
+    </div>
+    <div class="b b-img b-fit" style="--m:39/2/45/10;--d:31/18/39/26;--z:11" data-anim="fade">
+      <img src="assets/snap-05.webp" alt="The Wave Grille dining room" loading="lazy" width="1400" height="934">
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ investment highlights plaque -->
+<section class="sec sec-banner sec-dark sec-bg" id="highlights"
+         style="--bg:url('assets/highlights-banner.webp');--tint:.25">
+  <div class="fe" style="--rows-m:7;--rows-d:19">
+    <div class="b plaque" style="--m:5/2/8/10;--d:8/9/13/19;--z:0" data-anim="scale">
+      <h2>Investment Highlights</h2>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== highlight — location -->
+<section class="sec" id="hl-location">
+  <div class="fe" style="--rows-m:16;--rows-d:50">
+    <div class="b" style="--m:1/2/5/10;--d:1/2/14/26;--z:1">
+      <div class="panel panel-dark"></div>
+    </div>
+    <div class="b on-panel on-panel-white" style="--m:3/2/5/10;--d:2/3/13/16;--z:2" data-anim="fade">
+      <h3><strong>Premier Gulf Coast Location with Robust Leisure Demand</strong></h3>
+      <p>The Ramada Venice Hotel Venezia benefits from a highly visible and accessible location along U.S. Highway 41, just two miles from Venice&rsquo;s acclaimed Gulf beaches and less than ten minutes from Interstate 75. Venice, known as the &ldquo;Shark Tooth Capital of the World,&rdquo; attracts visitors year-round with its pristine beaches, historic MainStreet, vibrant arts community, and numerous golf courses. The Hotel is eight minutes north of Venice Municipal Airport and only 35 minutes from Sarasota&ndash;Bradenton International Airport (SRQ), which accommodated over four million passengers in 2024, a 116% increase compared to record setting 2019. The broader Sarasota region further enhances the area&rsquo;s appeal, offering renowned cultural institutions, outdoor recreation, and major sporting events such as the Atlanta Braves&rsquo; Spring Training at CoolToday Park, located 20 minutes from the Property.</p>
+    </div>
+
+    <div class="b b-img b-fit" style="--m:5/2/11/10;--d:3/17/21/25;--z:4" data-anim="fade">
+      <img src="assets/demand-legend.webp" alt="Legend keying the numbered demand generators on the map below" loading="lazy" width="1100" height="1679">
+    </div>
+    <div class="b zoom-wrap" style="--m:11/2/17/10;--d:14/2/51/26;--z:3" id="demand-map" data-anim="fade">
+      <img src="assets/demand-map.webp" alt="Aerial map of Venice, Florida locating the Hotel against the area's leisure, healthcare and corporate demand generators. Click to magnify." loading="lazy" width="2500" height="2277">
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ highlights — remaining four -->
+<section class="sec sec-dark" id="hl-offering">
+  <div class="fe" style="--rows-m:46;--rows-d:60">
+
+    <!-- meeting space -->
+    <div class="b" style="--m:2/2/6/10;--d:1/2/14/26;--z:2">
+      <div class="panel panel-light"></div>
+    </div>
+    <div class="b on-panel on-panel-ink" style="--m:4/2/6/10;--d:2/3/13/13;--z:3" data-anim="fade">
+      <h3><strong>Exclusive Full-Service Offering with Extensive Meeting Space</strong></h3>
+      <p>With over 10,500 square feet of flexible meeting and event space across eight rooms, the Ramada Venice Hotel Venezia stands as the only full-service lodging option within a 15-mile radius. The Property&rsquo;s flexible facilities can accommodate up to 1,050 guests for conferences or 850 guests for banquets, making it an attractive venue for corporate meetings, weddings, and social gatherings, capturing regional demand that has limited alternatives in the surrounding market.</p>
+    </div>
+    <div class="b b-img" style="--m:6/2/12/10;--d:1/14/14/26;--z:4" data-anim="fade">
+      <img src="assets/meeting-space.webp" alt="Ballroom set for a banquet with round tables and a dance floor" loading="lazy" width="1600" height="1064">
+    </div>
+
+    <!-- cash flow -->
+    <div class="b" style="--m:12/2/22/10;--d:14/2/27/26;--z:3">
+      <div class="panel panel-light"></div>
+    </div>
+    <div class="b b-img" style="--m:14/2/20/10;--d:14/2/27/14;--z:5" data-anim="fade">
+      <img src="assets/banquet.webp" alt="Event space arranged for a reception" loading="lazy" width="1600" height="1067">
+    </div>
+    <div class="b on-panel on-panel-ink" style="--m:20/2/22/10;--d:15/15/26/25;--z:4" data-anim="fade">
+      <h3><strong>Strong In-place Cash Flow</strong></h3>
+      <p>The Hotel has strong trailing twelve cash flow translating to immediate yield and coverage on day one. The Hotel will benefit from a refreshing renovation allowing it to drive ADR on pace with the market. Given the Hotel&rsquo;s current cash flow, the Property is financeable on day one.</p>
+    </div>
+
+    <!-- supply -->
+    <div class="b" style="--m:22/2/32/10;--d:27/2/40/26;--z:4">
+      <div class="panel panel-light"></div>
+    </div>
+    <div class="b on-panel on-panel-ink" style="--m:24/2/26/10;--d:28/3/39/13;--z:5" data-anim="fade">
+      <h3><strong>No New Full-Service Supply Underway</strong></h3>
+      <p>The Sarasota/Beaches submarket has no full-service hotels with comparable meeting space under construction. With over 10,500 square feet of flexible event space, the Ramada Venice Hotel Venezia remains uniquely positioned in the market. While two select-service hotels are planned nearly 18 miles north in Sarasota, neither offers comparable facilities nor directly competes with the Property.</p>
+    </div>
+    <div class="b b-img" style="--m:26/2/32/10;--d:27/14/40/26;--z:6" data-anim="fade">
+      <img src="assets/supply-aerial.webp" alt="Aerial view over the hotel and the surrounding Venice submarket" loading="lazy" width="1600" height="1067">
+    </div>
+
+    <!-- fee simple -->
+    <div class="b" style="--m:32/2/42/10;--d:40/2/53/26;--z:5">
+      <div class="panel panel-light"></div>
+    </div>
+    <div class="b b-img" style="--m:34/2/40/10;--d:40/2/53/14;--z:7" data-anim="fade">
+      <img src="assets/snap-01.webp" alt="Exterior of the Ramada Venice Hotel Venezia" loading="lazy" width="1400" height="934">
+    </div>
+    <div class="b on-panel on-panel-ink" style="--m:40/2/42/10;--d:41/15/52/25;--z:6" data-anim="fade">
+      <h3><strong>Optimal Offering &ndash; Fee Simple, Unencumbered by Management</strong></h3>
+      <p>The Property is offered fee simple and free and clear of existing management and financing, affording new ownership maximum optionality in the future operation and capitalization of the Hotel.</p>
+    </div>
+
+    <div class="b" style="--m:42/2/44/6;--d:57/7/59/13;--z:2" data-anim="fade">
+      <a class="btn" href="https://secure.rightsignature.com/templates/a8360ae7-2340-414e-860a-56303bbf81ae/template-signer-link/4163d5d0c4a3346a57607b79e2631e57">Sign Confidentiality Agreement</a>
+    </div>
+    <div class="b" style="--m:44/2/46/6;--d:57/15/59/21;--z:3" data-anim="fade">
+      <a class="btn" href="assets/Ramada-Venice-Hotel-Venezia-CA.docx" download>Download Confidentiality Agreement</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================================================================ footer -->
+<footer class="sec sec-footer sec-dark" id="contact">
+  <div class="fe" style="--rows-m:12;--rows-d:15">
+    <div class="b b-footer-logo" style="--m:1/2/5/10;--d:4/4/12/8;--z:1">
+      <a href="https://hodgeswardelliott.com/" target="_blank" rel="noopener">
+        <img src="assets/hwe-white.svg" alt="Hodges Ward Elliott" width="250" height="96">
+      </a>
+    </div>
+    <div class="b" style="--m:5/2/12/10;--d:4/10/12/25;--z:2">
+      <div class="contacts">
+        <section class="contacts-group" aria-labelledby="reps">
+          <p class="contacts-header" id="reps">Exclusive Representatives</p>
+          <div class="contact"><b>Preston Reid</b><br>Managing Director<br><a href="mailto:preid@hodgeswardelliott.com">preid@hodgeswardelliott.com</a></div>
+          <div class="contact"><b>Celina Nowicki</b><br>Associate<br><a href="mailto:cnowicki@hodgeswardelliott.com">cnowicki@hodgeswardelliott.com</a></div>
+        </section>
+        <section class="contacts-group" aria-labelledby="fin">
+          <p class="contacts-header" id="fin">Acquisition Financing Advisors</p>
+          <div class="contact"><b>Michael Britvan</b><br>Managing Director<br><a href="mailto:mbritvan@hodgeswardelliott.com">mbritvan@hodgeswardelliott.com</a></div>
+          <div class="contact"><b>Coby Campbell</b><br>Senior Vice President<br><a href="mailto:ccampbell@hodgeswardelliott.com">ccampbell@hodgeswardelliott.com</a></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- scroll-in, mirroring the source's staggered fade / scale ----
+     The hidden state is only ever applied by this script, so the page renders
+     in full when JS is off. A watchdog covers the case where JS runs but the
+     observer never reports — a hidden or non-compositing tab, say — so the
+     copy can never be left stranded at opacity 0. */
+  if (!reduce && 'IntersectionObserver' in window) {
+    var targets = [].slice.call(document.querySelectorAll('[data-anim]'));
+    document.body.classList.add('js-anim');
+    var seen = 0;
+    function show(el, stagger) {
+      if (stagger) el.style.setProperty('--delay', ((seen++ % 4) * 0.09) + 's');
+      el.classList.add('shown');
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        show(e.target, true);
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+    targets.forEach(function (el) { io.observe(el); });
+
+    setTimeout(function () {
+      if (document.querySelectorAll('[data-anim].shown').length) return;
+      io.disconnect();
+      targets.forEach(function (el) { show(el, false); });
+    }, 3000);
+  }
+
+  /* ---- click-to-magnify on the demand map ---- */
+  var wrap = document.getElementById('demand-map');
+  if (wrap) {
+    var img = wrap.querySelector('img');
+    var zoomed = false;
+
+    function origin(e) {
+      var r = img.getBoundingClientRect();
+      var pt = (e.touches && e.touches.length === 1) ? e.touches[0] : e;
+      if (typeof pt.clientX !== 'number') return;
+      img.style.transformOrigin =
+        (((pt.clientX - r.left) / r.width) * 100) + '% ' +
+        (((pt.clientY - r.top) / r.height) * 100) + '%';
+    }
+    function toggle(e) {
+      zoomed = !zoomed;
+      wrap.classList.toggle('zoomed', zoomed);
+      wrap.setAttribute('aria-pressed', String(zoomed));
+      if (zoomed) { origin(e); } else { img.style.transformOrigin = 'center center'; }
+    }
+
+    /* Advertise the control only once the script that powers it is running. */
+    wrap.setAttribute('role', 'button');
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('aria-pressed', 'false');
+    wrap.setAttribute('aria-label', 'Demand generator map — click to magnify');
+
+    wrap.addEventListener('click', toggle);
+    wrap.addEventListener('touchstart', toggle, { passive: true });
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); }
+      if (e.key === 'Escape' && zoomed) { toggle(e); }
+    });
+    wrap.addEventListener('mousemove', function (e) { if (zoomed) origin(e); });
+    wrap.addEventListener('touchmove', function (e) { if (zoomed) origin(e); }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>
