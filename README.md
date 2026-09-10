@@ -211,7 +211,7 @@ and settles it to 1.0, `"in"` grows it from 1.0 to 1.14.
 |---|---|
 | `#hero` | `out` |
 | divider band | `in` |
-| `#highlights` | `in` |
+| `#highlights` | `out` |
 
 The photograph lives on `.sec-bg::before`, and a pseudo-element cannot be
 addressed from script — but it *does* inherit custom properties from the element
