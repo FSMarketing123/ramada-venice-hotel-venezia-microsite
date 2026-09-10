@@ -32,6 +32,7 @@
   --ink:#333;             /* black       hsl(0 0% 20%)             */
   --light-accent:#eaeaea; /* lightAccent hsl(0 0% 91.76%)          */
   --ground:#f6f5f5;       /* rgba(65,60,57,.05) over white         */
+  --paper:url('assets/texture-paper.webp');
 
   /* Grid. Squarespace's own formulae, with this site's own tokens rather than
      the defaults the export falls back to: the gutter is 3vw and the site max
@@ -86,7 +87,7 @@ p:last-child{margin-bottom:0}
 .sec-intro{padding:var(--pad-md) 0}
 .sec-banner{padding:var(--pad-xs) 0}
 .sec-footer{padding:var(--pad-sm) 0}
-.sec-dark{background:var(--ink);color:#fff}
+.sec-dark{background-color:var(--ink);color:#fff}
 
 /* Full-bleed photographic ground plus its tint. Both live on the section's own
    pseudo-elements so the grid above them needs no extra wrapper. They sit at
@@ -98,6 +99,37 @@ p:last-child{margin-bottom:0}
   background-position:var(--bg-pos, 50% 50%);
 }
 .sec-bg::after{background:var(--ink);opacity:var(--tint, 0)}
+
+/* ------------------------------------------------------------ paper ground
+   A tiled paper grain blended into the section's own colour. Image and colour
+   have to sit on the same element for background-blend-mode to see each other,
+   so this goes on the section rather than on a layer inside it — which is also
+   why .sec-dark above sets background-color and not the background shorthand,
+   a shorthand there would reset background-image to none.
+
+   The tile is fixed, so 35% resolves against the viewport rather than the
+   section: one tile is ~504px at 1440 (about 1:1 for a 500px tile) and ~131px
+   at 375, where the grain reads finer. */
+.sec-paper{
+  background-image:var(--paper);
+  background-size:35%;
+  background-repeat:repeat;
+  background-attachment:fixed;
+}
+/* Light grounds: the grain blends up against a near-transparent warm grey. */
+#overview,#property,#hl-location{
+  background-color:rgba(65,60,57,.05);
+  background-blend-mode:hard-light;
+}
+/* The two dark sections inherit .sec-dark's ink rather than naming a colour.
+   hard-light over a light tile always lightens, so giving the footer the light
+   sections' rgba(65,60,57,.05) turns its ground near-white and takes the white
+   copy and the HWE mark with it — it gets #hl-offering's overlay instead, which
+   keeps the ground dark and still carries the grain. */
+#hl-offering,#contact{background-blend-mode:overlay}
+
+/* iOS Safari ignores background-attachment:fixed and repaints badly under it. */
+@media (hover:none){.sec-paper{background-attachment:scroll}}
 
 /* ------------------------------------------------------------------- grid */
 .fe{
@@ -286,7 +318,7 @@ p:last-child{margin-bottom:0}
 </section>
 
 <!-- ================================================================= intro -->
-<section class="sec sec-intro" id="overview">
+<section class="sec sec-intro sec-paper" id="overview">
   <div class="fe" style="--rows-m:11;--rows-d:10">
     <div class="b" style="--m:1/2/8/10;--d:3/6/7/22;--z:0" data-anim="fade">
       <p style="text-align:center">Hodges Ward Elliott (&ldquo;HWE&rdquo;) has been exclusively retained to offer for sale the <strong>Ramada Venice Hotel Venezia</strong> (the &ldquo;Hotel&rdquo; or &ldquo;Property&rdquo;), a <strong>146-key full-service hotel</strong> featuring <strong>over 10,500 square feet of flexible meeting and event space</strong> in the heart of Venice, Florida. Positioned on 5.6 acres along U.S. Highway 41, the Property offers excellent visibility and convenient access to Interstate 75 and Sarasota&ndash;Bradenton International Airport (SRQ). Just two miles from Venice&rsquo;s acclaimed Gulf beaches, the Hotel is ideally situated to capture demand from historic downtown Venice and South Sarasota&rsquo;s leisure, healthcare, and corporate sectors.</p>
@@ -307,7 +339,7 @@ p:last-child{margin-bottom:0}
 </section>
 
 <!-- ====================================================== property snapshot -->
-<section class="sec" id="property" aria-label="Property snapshot">
+<section class="sec sec-paper" id="property" aria-label="Property snapshot">
   <div class="fe" style="--rows-m:44;--rows-d:38">
     <div class="b" style="--m:1/2/15/10;--d:1/2/31/11;--z:4">
       <div class="panel panel-crimson"></div>
@@ -364,7 +396,7 @@ p:last-child{margin-bottom:0}
 </section>
 
 <!-- ==================================================== highlight — location -->
-<section class="sec" id="hl-location">
+<section class="sec sec-paper" id="hl-location">
   <div class="fe" style="--rows-m:16;--rows-d:50">
     <div class="b" style="--m:1/2/5/10;--d:1/2/14/26;--z:1">
       <div class="panel panel-dark"></div>
@@ -384,7 +416,7 @@ p:last-child{margin-bottom:0}
 </section>
 
 <!-- ================================================ highlights — remaining four -->
-<section class="sec sec-dark" id="hl-offering">
+<section class="sec sec-dark sec-paper" id="hl-offering">
   <div class="fe" style="--rows-m:46;--rows-d:60">
 
     <!-- meeting space -->
@@ -446,7 +478,7 @@ p:last-child{margin-bottom:0}
 </main>
 
 <!-- ================================================================ footer -->
-<footer class="sec sec-footer sec-dark" id="contact">
+<footer class="sec sec-footer sec-dark sec-paper" id="contact">
   <div class="fe" style="--rows-m:12;--rows-d:15">
     <div class="b b-footer-logo" style="--m:1/2/5/10;--d:4/4/12/8;--z:1">
       <a href="https://hodgeswardelliott.com/" target="_blank" rel="noopener">
