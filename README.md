@@ -398,8 +398,21 @@ displayed at roughly 4900px wide.
 
 ## Property snapshot table
 
-Both columns are left-aligned. Rows highlight and lift 2% on hover, gated on
-`@media (hover:hover)` so the state does not latch on a tap.
+Labels read left-aligned but sit centred as a group: each is wrapped in a span
+the width of the widest label ("Food & Beverage"), so every label shares one left
+edge and `margin-inline: auto` centres that block in the cell. Centring each
+label independently would just be `text-align: center` and give the ragged left
+edge this avoids.
+
+The span is `9.4em`, not the measured `9.23em` — at exactly the text's width it
+wrapped to two lines on a sub-pixel rounding, so there is headroom plus a
+`white-space: nowrap` behind it. Sizing in `em` keeps it right when the type
+steps down on mobile. The label cell's padding is symmetric (`8px`) rather than
+the source's `10px/7px`, so the block centres against the cell rather than
+against a content box the uneven padding has already shifted.
+
+Rows highlight and lift 2% on hover, gated on `@media (hover:hover)` so the
+state does not latch on a tap.
 
 The table had to move from `border-collapse: collapse` to `separate`, with the
 rule between rows becoming a bottom border on the cells. A collapsed border is

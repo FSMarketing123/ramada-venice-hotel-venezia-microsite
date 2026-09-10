@@ -296,7 +296,18 @@ p:last-child{margin-bottom:0}
 /* 207px is the source's rendered label cell — 190px of content plus its 17px
    of padding — which is what makes "Complimentary Self-Service Parking" break
    over three lines rather than two. */
-.prop-table td.pbold{width:207px;max-width:54%}
+/* Symmetric padding here so margin-inline:auto centres the block against the
+   cell, not against a content box the 10/7 padding has already shifted. */
+.prop-table td.pbold{width:207px;max-width:54%;padding-left:8px;padding-right:8px}
+/* Labels read left-aligned but sit centred as a group: the span is the width of
+   the widest label ("Food & Beverage", 147.7px at 16px) so every label shares
+   one left edge, and margin-inline:auto centres that block in the cell. 9.4em
+   rather than the measured 9.23: at exactly the text's width it wrapped to two
+   lines on a sub-pixel rounding, so there is headroom and a nowrap behind it.
+   Sizing it in em rather than px keeps it correct when the type steps down on
+   mobile. Centring each label independently would be text-align:center, which
+   is the ragged left edge this is meant to avoid. */
+.prop-table td.pbold > span{display:block;width:9.4em;margin-inline:auto;text-align:left;white-space:nowrap}
 .prop-table td:last-child{font-weight:400;text-transform:none}
 /* The source indents this list 40px, which leaves "Business Center" too little
    room and overflows the cell rather than wrapping. 22px keeps all four items
@@ -581,19 +592,19 @@ p:last-child{margin-bottom:0}
     <div class="b" style="--m:9/2/15/10;--d:11/3/30/10;--z:5" data-anim="fade">
       <table class="prop-table">
         <tbody>
-          <tr><td class="pbold">Address</td><td><span style="white-space:nowrap">425 U.S. 41 Bypass N</span> <span style="white-space:nowrap">Venice,&nbsp;FL&nbsp;34285</span></td></tr>
-          <tr><td class="pbold">Keys</td><td>146</td></tr>
-          <tr><td class="pbold">Year Opened</td><td>1975</td></tr>
-          <tr><td class="pbold">Year Renovated</td><td>2019</td></tr>
-          <tr><td class="pbold">Event Space</td><td>10,500 SF</td></tr>
-          <tr><td class="pbold">Food &amp; Beverage</td><td>Wave Grille</td></tr>
-          <tr><td class="pbold">Amenities</td><td><ul><li>Outdoor Pool</li><li>Hot Tub</li><li>Fitness Center</li><li>Business Center</li></ul></td></tr>
-          <tr><td class="pbold">Site Area</td><td>5.64 AC</td></tr>
-          <tr><td class="pbold">Parking</td><td>Complimentary Self-Service Parking</td></tr>
-          <tr><td class="pbold">Management</td><td>Unencumbered</td></tr>
-          <tr><td class="pbold">Brand</td><td>Ramada by Wyndham</td></tr>
-          <tr><td class="pbold">Interest</td><td>Fee-Simple</td></tr>
-          <tr><td class="pbold">Labor</td><td>Non-Union</td></tr>
+          <tr><td class="pbold"><span>Address</span></td><td><span style="white-space:nowrap">425 U.S. 41 Bypass N</span> <span style="white-space:nowrap">Venice,&nbsp;FL&nbsp;34285</span></td></tr>
+          <tr><td class="pbold"><span>Keys</span></td><td>146</td></tr>
+          <tr><td class="pbold"><span>Year Opened</span></td><td>1975</td></tr>
+          <tr><td class="pbold"><span>Year Renovated</span></td><td>2019</td></tr>
+          <tr><td class="pbold"><span>Event Space</span></td><td>10,500 SF</td></tr>
+          <tr><td class="pbold"><span>Food &amp; Beverage</span></td><td>Wave Grille</td></tr>
+          <tr><td class="pbold"><span>Amenities</span></td><td><ul><li>Outdoor Pool</li><li>Hot Tub</li><li>Fitness Center</li><li>Business Center</li></ul></td></tr>
+          <tr><td class="pbold"><span>Site Area</span></td><td>5.64 AC</td></tr>
+          <tr><td class="pbold"><span>Parking</span></td><td>Complimentary Self-Service Parking</td></tr>
+          <tr><td class="pbold"><span>Management</span></td><td>Unencumbered</td></tr>
+          <tr><td class="pbold"><span>Brand</span></td><td>Ramada by Wyndham</td></tr>
+          <tr><td class="pbold"><span>Interest</span></td><td>Fee-Simple</td></tr>
+          <tr><td class="pbold"><span>Labor</span></td><td>Non-Union</td></tr>
         </tbody>
       </table>
     </div>
