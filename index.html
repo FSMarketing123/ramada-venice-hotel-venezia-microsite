@@ -359,7 +359,7 @@ p:last-child{margin-bottom:0}
 <main id="main">
 
 <!-- ======================================================== hero / masthead -->
-<section class="sec sec-hero sec-dark sec-bg" id="hero"
+<section class="sec sec-hero sec-dark sec-bg sec-px" id="hero" data-px="out"
          style="--bg:url('assets/hero-pool.webp')">
   <div class="fe" style="--rows-m:16;--rows-d:28">
     <div class="b" style="--m:1/2/2/10;--d:1/1/5/12;--z:2"><hr class="rule"></div>
@@ -620,9 +620,15 @@ p:last-child{margin-bottom:0}
         var r = sec.getBoundingClientRect();
         if (r.bottom < -200 || r.top > vh + 200) continue;
 
-        /* 0 as the section's top edge meets the viewport bottom,
-           1 as its bottom edge meets the viewport top. */
-        var p = (vh - r.top) / (vh + r.height);
+        /* Normally 0 as the section's top edge meets the viewport bottom and
+           1 as its bottom edge meets the viewport top. A section sitting at the
+           top of the document never enters from below, though — the hero would
+           load already 45% through its travel — so one that is on screen at
+           scroll 0 is driven by how far it has scrolled past instead, which
+           puts it at 0 on load and 1 once a full section height has gone by. */
+        var p = (r.top + scrollY < vh)
+          ? -r.top / r.height
+          : (vh - r.top) / (vh + r.height);
         p = p < 0 ? 0 : p > 1 ? 1 : p;
 
         /* The layer drifts down as the page scrolls up, so it reads slower

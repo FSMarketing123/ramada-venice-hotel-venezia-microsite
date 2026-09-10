@@ -203,9 +203,10 @@ Squarespace `/s/` path, which will not exist once this is served from Pages.
 
 ## Background parallax
 
-The divider band and `#highlights` drift and scale as they cross the viewport.
-`data-px` picks the direction — `"out"` on the divider starts the photograph at
-1.14 and settles it to 1.0, `"in"` on `#highlights` does the reverse.
+The hero, the divider band and `#highlights` drift and scale as they cross the
+viewport. `data-px` picks the direction — `"out"` on the hero and the divider
+starts the photograph at 1.14 and settles it to 1.0, `"in"` on `#highlights`
+does the reverse.
 
 The photograph lives on `.sec-bg::before`, and a pseudo-element cannot be
 addressed from script — but it *does* inherit custom properties from the element
@@ -222,8 +223,14 @@ Values sweep as: `--py` from `-6%` to `+6%` of section height, `--pz` across a
 viewport, and is not installed at all under `prefers-reduced-motion`, which
 leaves the layer at `scale(1) translate(0)`.
 
-The hero is **not** parallaxed — the request named `.sec.sec-dark.sec-bg` with
-no `sec-hero` or `sec-banner`, which matches only the divider band.
+**A section on screen at scroll 0 needs a different progress mapping.** The
+usual one runs 0 as the top edge meets the viewport bottom and 1 as the bottom
+edge meets the viewport top — but the hero never enters from below, so it would
+load already 45% through its travel, at scale 1.077 rather than 1.14. A section
+whose document offset is inside the first viewport is therefore driven by how
+far it has scrolled *past* instead: 0 on load, 1 once a full section height has
+gone by. The test is scroll-invariant, so a deep link into the page does not
+change which mapping a section gets.
 
 ## Image hover and popout
 
