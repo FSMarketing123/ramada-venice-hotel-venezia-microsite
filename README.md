@@ -373,6 +373,22 @@ The three SVGs carried the same embedded Adobe PGF blob as the HWE and Venezia
 lockups did. 3200px keeps the base map sharp at the 5× ceiling, where it is
 displayed at roughly 4900px wide.
 
+## Footer contacts
+
+Each group is a two-up: its rule spans both columns, then the pair sits on one
+row beneath it — Preston Reid beside Celina Nowicki, Michael Britvan beside Coby
+Campbell. That took the footer from 926px to 692px.
+
+The one-column breakpoint is **1100px**, which is higher than it looks like it
+should be. `ccampbell@hodgeswardelliott.com` renders at 280px and an email
+address has no break opportunity, so a column narrower than that does not wrap
+it — it runs over whatever sits beside it. Two 284px columns plus the 40px
+gutter need a 608px contacts block, and the grid only reaches that at about a
+1100px viewport. `overflow-wrap: anywhere` on the address is the backstop.
+
+Verified at 1440 (360px cards), 1101 (297px, the tightest two-up) and 1024
+(stacked).
+
 ## Behaviour
 
 **Scroll-in.** Blocks fade or scale in as they cross the viewport, mirroring the
