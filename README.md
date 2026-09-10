@@ -308,9 +308,40 @@ that the wheel is inert until the map is past 100%.
 ### Layout
 
 Map first, demand-driver table across the full width beneath it — not the kit's
-352px side column. The table is a `repeat(auto-fill, minmax(258px, 1fr))` grid,
-so all 18 cards are on screen at once (four columns at 1440) instead of a
-scrolling list showing five at a time. One column below 900px.
+352px side column. The table is a `repeat(auto-fill, minmax(min(316px,100%), 1fr))`
+grid, so all 18 cards are on screen at once (four columns at 1440) instead of a
+scrolling list showing five at a time. One column below 900px. Cards are 56px
+tall against the kit's 76.
+
+### Names never wrap
+
+The 316px track floor is measured, not guessed. At 13px the longest name —
+"Clyde Butcher Venice Gallery & Studio" — is 254px, and the card's chrome (28px
+number, 10px gap, 22px padding, 2px border) is 62px, so 316px is what it takes
+to hold every name on one line. At 1440 that yields four 322px columns with a
+260px label well clear of the 254px it needs.
+
+Below 900px the card is one per row and can be no wider than the phone, where
+the longest name at 14px is flatly impossible: 273px of text into a 242px label.
+The name size there tracks the viewport instead — `clamp(11.5px, 3.25vw, 13px)`
+— which clears the label from 360px up (11.7px at 360, 12.2 at 375, capped at 13
+from about 400). Verified at 360 / 375 / 390 / 1024 / 1440. Under 360 the two
+longest names wrap rather than shrink to illegibility.
+
+**`.imap button` had to lose its specificity to make any of this work.** As a
+plain rule it is (0,1,1) — a class *and* a type — so its `font: inherit` quietly
+out-ranked `.imap-row`'s own `font-size` and the cards stayed at the component's
+14px however the card rule was written. It is `:where(.imap button)` now, which
+carries none.
+
+### Focus follows the hand-off
+
+Clicking a card moves focus to the map; clicking a marker moves it to that
+card; clicking the map to reset moves it to the table as a whole (the list
+carries `tabindex="-1"` for the purpose). Every one of those uses
+`focus({ preventScroll: true })` — the map is around 960px tall, so letting the
+browser scroll a newly focused card into view would yank the page out from under
+the reader.
 
 The panel takes `aspect-ratio: 1856/1334`, so the component's height follows its
 width and the base map fills the panel exactly — 1337 × 961 at a 1440 viewport,
