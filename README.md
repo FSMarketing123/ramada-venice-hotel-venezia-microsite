@@ -204,9 +204,14 @@ Squarespace `/s/` path, which will not exist once this is served from Pages.
 ## Background parallax
 
 The hero, the divider band and `#highlights` drift and scale as they cross the
-viewport. `data-px` picks the direction — `"out"` on the hero and the divider
-starts the photograph at 1.14 and settles it to 1.0, `"in"` on `#highlights`
-does the reverse.
+viewport. `data-px` picks the direction: `"out"` starts the photograph at 1.14
+and settles it to 1.0, `"in"` grows it from 1.0 to 1.14.
+
+| section | direction |
+|---|---|
+| `#hero` | `out` |
+| divider band | `in` |
+| `#highlights` | `in` |
 
 The photograph lives on `.sec-bg::before`, and a pseudo-element cannot be
 addressed from script — but it *does* inherit custom properties from the element
