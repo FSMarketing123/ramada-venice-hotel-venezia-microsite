@@ -297,8 +297,8 @@ that the wheel is inert until the map is past 100%.
   judged on release: a pointer that travelled more than 4px was a pan, not a
   click, so it does not throw the view away, and a press that started on a
   marker is ignored outright.
-- **The legend's scroll-into-view is removed.** It existed to keep a selected
-  row visible in a scrolling column; the table no longer scrolls.
+- **The legend's scroll-into-view is kept**, and scrolls the rail rather than
+  the page.
 - **Type and colour are the site's** — Poppins and `--crimson` (`#cc1e41`) in
   place of Arial/Georgia and the kit's `#ce1741`.
 - **The badge uses the site's existing `logo-venezia-white.svg`.** The kit's
@@ -307,19 +307,27 @@ that the wheel is inert until the map is past 100%.
 
 ### Layout
 
-Map first, demand-driver table across the full width beneath it — not the kit's
-352px side column. The table is a `repeat(auto-fill, minmax(min(316px,100%), 1fr))`
-grid, so all 18 cards are on screen at once (four columns at 1440) instead of a
-scrolling list showing five at a time. One column below 900px. Cards are 56px
-tall against the kit's 76.
+Map left, demand-driver table right, in a 366px rail. Below 1100px the two stack
+and the table runs full width as a `repeat(auto-fill, minmax(min(316px,100%), 1fr))`
+grid — two columns around 1024, one below 900. Cards are 56px tall against the
+kit's 76, so the rail shows about seven at a time rather than five.
+
+Side-by-side caps the table's height at the map's, so the rail scrolls; there is
+no arrangement that shows all 18 beside a map of usable size. Clicking a marker
+therefore scrolls its card into view **within the rail** — never the page.
+
+The rail is 366px rather than the kit's 352. The list scrolls, its scrollbar
+takes about 12px, and at 352 that left the card at exactly the 316px no-wrap
+floor with nothing to spare. 366 puts 15px back: a 330px card, a 268px label,
+against a 253px longest name.
 
 ### Names never wrap
 
 The 316px track floor is measured, not guessed. At 13px the longest name —
 "Clyde Butcher Venice Gallery & Studio" — is 254px, and the card's chrome (28px
 number, 10px gap, 22px padding, 2px border) is 62px, so 316px is what it takes
-to hold every name on one line. At 1440 that yields four 322px columns with a
-260px label well clear of the 254px it needs.
+to hold every name on one line. The 366px rail clears it with 15px to spare, and
+the stacked grid below 1100px never goes under the floor either.
 
 Below 900px the card is one per row and can be no wider than the phone, where
 the longest name at 14px is flatly impossible: 273px of text into a 242px label.
@@ -344,14 +352,14 @@ browser scroll a newly focused card into view would yank the page out from under
 the reader.
 
 The panel takes `aspect-ratio: 1856/1334`, so the component's height follows its
-width and the base map fills the panel exactly — 1337 × 961 at a 1440 viewport,
-no letterbox. `min-height: 620px` matches the kit's guidance for narrow
-desktops. Below 900px the panel switches to `52vh` (min 360).
+width and the base map fills the panel exactly — 971 × 700 at a 1440 viewport,
+no letterbox. Below 900px the panel switches to `52vh` (min 360).
 
-Stacking the two also sidesteps a trap the side-column version had: as a grid
-item the legend's 18 cards are intrinsic content, so an auto row sized itself to
-them — stretching the block to 1708px against the panel's 708px and stranding
-the map in 500px of dead space. Stacked, the two never compete for height.
+**The rail is positioned, not a grid column.** As a grid item its 18 cards are
+intrinsic content, so an auto row sizes itself to them — which stretched the
+block to 1708px against the panel's 708px and stranded the map in 500px of dead
+space. Positioned, it contributes no height at all and simply fills the one the
+panel sets.
 
 ### Assets
 

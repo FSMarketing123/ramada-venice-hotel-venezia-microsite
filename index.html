@@ -317,13 +317,26 @@ p:last-child{margin-bottom:0}
    DOM, so it needs no build step or framework like the rest of the page. The
    geometry helpers below are a direct translation of lib/map-geometry.ts; the
    palette and type are the site's rather than the kit's. */
-/* Map above, demand-driver table across the full width beneath it. The panel
-   carries the reference map's own aspect, so its height follows its width and
-   the base map fills it with no letterbox. Stacking the two also means the
-   table's cards never fight the panel for height the way a side column did. */
+/* Map left, demand-driver table right. The panel carries the reference map's
+   own aspect, so its height follows its width and the base map fills it with no
+   letterbox — which makes the panel the sole height authority. The rail is
+   positioned rather than a grid column for exactly that reason: as a grid item
+   its 18 cards are intrinsic content and an auto row would size itself to them,
+   stretching the block to twice the panel's height and stranding the map in
+   dead space. Positioned, it contributes no height and simply fills the panel's.
+   Below 1100px the two stack and the table runs full width instead. */
 .imap{position:relative;border:1px solid #d8e3e4;background:#deebec;overflow:hidden;
   color:#252d31;font-size:14px;line-height:1.45}
-.imap-panel{aspect-ratio:1856/1334;min-height:620px}
+.imap-panel{aspect-ratio:1856/1334}
+/* 366 rather than the kit's 352: the list scrolls here, and the scrollbar eats
+   ~12px, which left the card at exactly the 316px no-wrap floor with nothing to
+   spare. This puts ~14px back. */
+@media (min-width:1101px){
+  .imap-panel{margin-right:366px}
+  .imap-legend{position:absolute;top:0;right:0;bottom:0;width:366px;border-left:1px solid #d8e3e4;border-top:0}
+  .imap-legend-list{grid-template-columns:1fr;overflow:auto;
+    scrollbar-width:thin;scrollbar-color:#d6b7bf transparent;min-height:0}
+}
 /* :where() so this carries no specificity — as a plain .imap button rule it
    was (0,1,1) and quietly out-ranked .imap-row's own font-size. */
 :where(.imap button){font:inherit;cursor:pointer}
@@ -389,7 +402,7 @@ p:last-child{margin-bottom:0}
   background:none;color:#40545a;pointer-events:auto;display:grid;place-items:center}
 
 /* ---- legend ---- */
-.imap-legend{background:#fff;display:flex;flex-direction:column;border-top:1px solid #d8e3e4}
+.imap-legend{background:#fff;display:flex;flex-direction:column;min-height:0;border-top:1px solid #d8e3e4}
 .imap-legend-top{padding:22px 20px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .imap-legend-top h4{font-size:22px;margin:6px 0 0;font-weight:500;letter-spacing:-.02em;line-height:1.2}
 .imap-count{flex:none;border:1px solid #f0c4ce;border-radius:50%;width:36px;height:36px;color:var(--crimson);
@@ -397,13 +410,13 @@ p:last-child{margin-bottom:0}
 .imap-legend-head{background:var(--crimson);color:#fff;display:grid;grid-template-columns:40px 1fr;
   gap:8px;padding:12px 20px;font-weight:600;font-size:13px}
 .imap-legend-head>span:first-child{text-align:center}
-/* Every card visible at once rather than a scrolling column. The 316px track
-   floor is measured, not guessed: the longest name ("Clyde Butcher Venice
-   Gallery & Studio") is 254px at this size, and 254 + the 28px number + the
-   10px gap + 22px of padding + the border is what it takes to keep every name
-   on one line. min(...,100%) stops the floor overflowing a narrow phone. */
+/* The 316px track floor is measured, not guessed: the longest name ("Clyde
+   Butcher Venice Gallery & Studio") is 254px at this size, and 254 + the 28px
+   number + the 10px gap + 22px of padding + the border is what it takes to keep
+   every name on one line. The 352px rail clears it too — 328px of card.
+   min(...,100%) stops the floor overflowing a narrow phone. */
 .imap-legend-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(316px,100%),1fr));
-  gap:8px;padding:12px;background:#f3f6f6}
+  gap:8px;padding:12px;background:#f3f6f6;flex:1}
 .imap-row{position:relative;width:100%;min-height:56px;display:grid;grid-template-columns:28px minmax(0,1fr);
   gap:10px;text-align:left;align-items:center;border:1px solid #e0e5e6;border-radius:8px;background:#fff;
   padding:9px 11px;color:#30383b;font-size:13px;line-height:1.35;
@@ -586,7 +599,7 @@ p:last-child{margin-bottom:0}
 
 <!-- ==================================================== highlight — location -->
 <section class="sec sec-tex" id="hl-location">
-  <div class="fe" style="--rows-m:16;--rows-d:44">
+  <div class="fe" style="--rows-m:16;--rows-d:32">
     <div class="b" style="--m:1/2/5/10;--d:1/2/14/26;--z:1">
       <div class="panel panel-dark"></div>
     </div>
@@ -595,7 +608,7 @@ p:last-child{margin-bottom:0}
       <p>The Ramada Venice Hotel Venezia benefits from a highly visible and accessible location along U.S. Highway 41, just two miles from Venice&rsquo;s acclaimed Gulf beaches and less than ten minutes from Interstate 75. Venice, known as the &ldquo;Shark Tooth Capital of the World,&rdquo; attracts visitors year-round with its pristine beaches, historic MainStreet, vibrant arts community, and numerous golf courses. The Hotel is eight minutes north of Venice Municipal Airport and only 35 minutes from Sarasota&ndash;Bradenton International Airport (SRQ), which accommodated over four million passengers in 2024, a 116% increase compared to record setting 2019. The broader Sarasota region further enhances the area&rsquo;s appeal, offering renowned cultural institutions, outdoor recreation, and major sporting events such as the Atlanta Braves&rsquo; Spring Training at CoolToday Park, located 20 minutes from the Property.</p>
     </div>
 
-    <div class="b imap-block" style="--m:5/2/17/10;--d:14/2/44/26;--z:3" data-anim="fade">
+    <div class="b imap-block" style="--m:5/2/17/10;--d:14/2/32/26;--z:3" data-anim="fade">
       <div class="imap">
         <section class="imap-panel" aria-label="Interactive map of Venice demand drivers">
           <div class="imap-canvas" id="imap-canvas" tabindex="0"
@@ -1023,6 +1036,15 @@ p:last-child{margin-bottom:0}
       selected = id;
       camera = focusCamera(places[id], board);
       render();
+      if (fromLegend) return;
+      /* In the side-by-side rail the table scrolls, so a marker's card has to be
+         brought into view — scrolling the list itself, never the page. */
+      var row = rowEls[id], list = row.parentElement;
+      if (list.scrollHeight > list.clientHeight) {
+        var r = row.getBoundingClientRect(), l = list.getBoundingClientRect();
+        if (r.top < l.top) list.scrollBy({ top: r.top - l.top - 8, behavior: 'smooth' });
+        else if (r.bottom > l.bottom) list.scrollBy({ top: r.bottom - l.bottom + 8, behavior: 'smooth' });
+      }
     }
 
     /* Focus follows the hand-off between the two halves: a card sends you to the
