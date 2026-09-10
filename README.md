@@ -16,7 +16,7 @@ index.html          single page, all sections
 CNAME               custom domain
 .nojekyll           bypass Jekyll processing
 assets/
-  *.webp            photography, demand map, legend
+  *.webp            photography, demand map, legend, ground textures
   *.svg             HWE mark, Ramada/Venezia lockup, favicon
   og-image.jpg      social card, cropped from the hero
   *.docx            confidentiality agreement
@@ -94,19 +94,25 @@ The heading's 32px bottom margin **collapses** with the paragraph's 16px top
 margin, so the gap between them is 32 and not 48 — that collapse is what
 reproduces the source's block heights.
 
-## Paper grounds
+## Textured grounds
 
-Five sections carry a tiled paper grain, `assets/texture-paper.webp` — WebP
-lossless from `../xx Images xx/xx FX xx/paper.png` (500×593, opaque, mean 239,
-stddev 4.7; 83KB → 72KB). It is byte-identical to the tile the Rockwall site
-uses.
+Five sections carry a tiled grain. Both tiles come from `../xx Images xx/xx FX xx/`
+as lossless WebP:
 
-| section | colour | blend |
-|---|---|---|
-| `#overview` `#property` `#hl-location` | `rgba(65,60,57,.05)` | `hard-light` |
-| `#hl-offering` `#contact` | inherited `--ink` | `overlay` |
+| tile | source | size | mean / stddev | weight |
+|---|---|---|---|---|
+| `texture-paper.webp` | `paper.png` | 500×593 | 239 / 4.7 | 83K → 72K |
+| `texture-diagonal-noise.webp` | `diagonal-noise.png` | 100×100 | 228 / 12.9 | 8.4K → 5.6K |
 
-Three things about this are easy to get wrong:
+`paper.png` is byte-identical to the tile the Rockwall site uses.
+
+| section | tile | colour | blend | resulting ground |
+|---|---|---|---|---|
+| `#overview` `#property` `#hl-location` | paper | `rgba(65,60,57,.05)` | `hard-light` | ~239, light |
+| `#hl-offering` | paper | inherited `--ink` | `overlay` | ~`#606060` |
+| `#contact` | diagonal noise | inherited `--ink` | `multiply` | ~`#2c2c2c` |
+
+Four things about this are easy to get wrong:
 
 - **The image and the colour must sit on the same element.**
   `background-blend-mode` blends an element's own background layers with each
@@ -115,14 +121,22 @@ Three things about this are easy to get wrong:
 - **`.sec-dark` sets `background-color`, not the `background` shorthand.** The
   shorthand would reset `background-image` to `none` and silently wipe the tile
   off both dark sections.
-- **The tile is `fixed`, so `background-size: 35%` resolves against the viewport,
-  not the section.** One tile is ~504px at 1440 — near 1:1 for a 500px source —
-  and ~131px at 375, where the grain reads considerably finer. A
-  `max(320px, 35%)` floor would even that out if the phone grain looks too fine.
+- **Blend direction decides whether a dark section survives.** With a light
+  tile, `hard-light` always lightens — on `#contact` or `#hl-offering` it takes
+  the ground near-white and the white copy and the HWE mark disappear into it.
+  `overlay` lifts the ink to about `#606060`; `multiply` takes it the other way,
+  to about `#2c2c2c`. Only the last two are safe on a dark section.
+- **Tiles are `fixed`, so `background-size` resolves against the viewport,
+  not the section.** The 500px paper is ~504px at 1440, about 1:1. The 100px
+  noise at 15% is ~216px, so it is upscaled 2.2× and reads softer than its
+  source; 7% would put it near 1:1 if a crisper weave is wanted.
+
+At 375 the paper tile is ~131px and the grain reads considerably finer than on
+desktop. A `max(320px, 35%)` floor would even that out.
 
 `background-attachment: fixed` is ignored on iOS Safari and repaints badly
-under it, so `@media (hover:none)` drops the tile to `scroll`. At phone widths
-the section is the viewport width anyway, so the tile size is unchanged.
+under it, so `@media (hover:none)` drops both tiles to `scroll`. At phone widths
+the section is the viewport width anyway, so tile sizes are unchanged.
 
 The band panels in `#hl-location` and `#hl-offering` now blend against a
 textured ground rather than a flat one, so they pick up a little of the grain
@@ -169,14 +183,6 @@ keeps all four items on one line each, inside the cell, which is how the source
 looks.
 
 **Images carry real alt text.** Every `alt` in the source is empty.
-
-**The footer's paper ground uses `overlay` on the inherited ink**, not the light
-sections' `hard-light` over `rgba(65,60,57,.05)`. Hard-light with a light tile
-always lightens: that combination takes the footer's ground to near-white and
-the white copy and HWE mark disappear into it. Overlay keeps the ground dark and
-still carries the grain. `#hl-offering` uses the same pair, and its ground
-lightens from `#333` to about `#606060` as a result — that is what overlay with
-a mean-239 tile does, not a mistake.
 
 **The confidentiality agreement is bundled** at
 `assets/Ramada-Venice-Hotel-Venezia-CA.docx` rather than linked to the
