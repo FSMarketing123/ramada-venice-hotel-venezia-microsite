@@ -201,6 +201,55 @@ Squarespace `/s/` path, which will not exist once this is served from Pages.
   highlight. They were two separate uploads of a byte-identical file on the
   source; deduplicated here.
 
+## Background parallax
+
+The divider band and `#highlights` drift and scale as they cross the viewport.
+`data-px` picks the direction — `"out"` on the divider starts the photograph at
+1.14 and settles it to 1.0, `"in"` on `#highlights` does the reverse.
+
+The photograph lives on `.sec-bg::before`, and a pseudo-element cannot be
+addressed from script — but it *does* inherit custom properties from the element
+it hangs off, so the scroll handler writes `--py` and `--pz` on the section and
+the layer consumes them. That keeps the whole effect on one compositor-friendly
+`transform` and needs no extra wrapper element.
+
+The layer is inset `-14%` top and bottom and the section clips it, which is what
+stops the travel uncovering an edge. Worst case is a 46.8px translation with no
+scale, at which the layer still overhangs the section by 62px at both ends.
+
+Values sweep as: `--py` from `-6%` to `+6%` of section height, `--pz` across a
+0.14 range. Handler is rAF-throttled, skips sections more than 200px outside the
+viewport, and is not installed at all under `prefers-reduced-motion`, which
+leaves the layer at `scale(1) translate(0)`.
+
+The hero is **not** parallaxed — the request named `.sec.sec-dark.sec-bg` with
+no `sec-hero` or `sec-banner`, which matches only the divider band.
+
+## Image hover and popout
+
+The nine photographs in `#property` and `#hl-offering` carry `data-zoom`: a soft
+hover scale to 1.06 over 550ms, plus a native `<dialog>` popout at full width on
+click.
+
+- `.b-img` already clips, so the scale cannot grow past the frame. Verified on
+  both the `cover` and the `contain` images.
+- The hover is gated on `@media (hover:hover)`. On a touch screen `:hover`
+  latches on tap, and the photograph would stay zoomed after the popout closed.
+- `<dialog>` + `showModal()` brings Esc-to-close, focus trapping and focus
+  restore for free. Backdrop-click is added by hand, since `<dialog>` has none of
+  its own: a click landing on the dialog box rather than its children is a
+  backdrop click.
+- `src` is cleared on close so the full-size bitmap is not held in memory, and
+  focus returns to the photograph that opened it.
+- The attributes that advertise a photograph as activatable — `role="button"`,
+  `tabindex`, `aria-label` (alt text + "— enlarge"), `cursor: zoom-in` — are all
+  applied **by the script**, so with JS off they stay plain images rather than
+  lying about being buttons.
+
+`#hl-location`'s demand map is deliberately left on its own separate mechanism:
+it magnifies 2× in place about the pointer rather than popping out, because it
+is a wide exhibit that wants panning, not a photograph.
+
 ## Behaviour
 
 **Scroll-in.** Blocks fade or scale in as they cross the viewport, mirroring the

@@ -101,6 +101,53 @@ p:last-child{margin-bottom:0}
 }
 .sec-bg::after{background:var(--ink);opacity:var(--tint, 0)}
 
+/* ---------------------------------------------------------------- parallax
+   The photograph lives on .sec-bg::before, and a pseudo-element cannot be
+   addressed from script — but it does inherit custom properties from the
+   element it hangs off, so the scroll handler writes --py and --pz on the
+   section and the layer consumes them.
+
+   The layer is inset past the section top and bottom so the travel can never
+   uncover a corner, and the section clips it. data-px picks the direction:
+   "in" grows the photograph as the section crosses the viewport, "out" starts
+   it large and settles it back. */
+.sec-px{overflow:hidden}
+.sec-px::before{
+  inset:-14% 0;
+  transform:translate3d(0,var(--py,0px),0) scale(var(--pz,1));
+  transform-origin:50% 50%;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+
+/* ------------------------------------------------------ image hover + popout
+   .b-img already clips, so the scale cannot grow past the frame. The cursor
+   and the button semantics are added by script, so with JS off these stay
+   plain images rather than advertising a popout that will not open. */
+[data-zoom] img{transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+/* Gated on a real pointer: on a touch screen :hover latches on tap and the
+   photograph would stay zoomed after the popout closes. */
+@media (hover:hover){
+  [data-zoom]:hover img{transform:scale(1.06)}
+}
+[data-zoom]:focus-visible img{transform:scale(1.06)}
+.js-zoom [data-zoom]{cursor:zoom-in}
+.js-zoom [data-zoom]:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
+
+.lightbox{
+  border:0;padding:0;background:transparent;overflow:visible;
+  width:min(92vw,1600px);max-width:92vw;max-height:92vh;
+}
+.lightbox::backdrop{background:rgba(20,18,18,.9)}
+.lightbox img{width:100%;height:auto;max-height:92vh;object-fit:contain}
+.lightbox-close{
+  position:absolute;top:-14px;right:-14px;width:44px;height:44px;
+  border:0;border-radius:50%;background:var(--crimson);color:#fff;
+  font:400 24px/1 'Poppins',sans-serif;cursor:pointer;
+}
+.lightbox-close:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media (max-width:600px){.lightbox-close{top:-52px;right:0}}
+
 /* --------------------------------------------------------- textured grounds
    A tiled grain blended into the section's own colour. Image and colour have to
    sit on the same element for background-blend-mode to see each other, so this
@@ -288,6 +335,9 @@ p:last-child{margin-bottom:0}
   .btn{transition:none}
   .btn:hover{transform:none}
   .zoom-wrap img{transition:none}
+  .sec-px::before{transform:none}
+  [data-zoom] img{transition:none}
+  [data-zoom]:hover img,[data-zoom]:focus-visible img{transform:none}
 }
 
 /* ------------------------------------------------------------- mobile fix
@@ -343,7 +393,7 @@ p:last-child{margin-bottom:0}
 </section>
 
 <!-- ======================================================= photographic band -->
-<section class="sec sec-dark sec-bg" aria-hidden="true"
+<section class="sec sec-dark sec-bg sec-px" aria-hidden="true" data-px="out"
          style="--bg:url('assets/divider-beach.webp');--bg-pos:49.3% 32%">
   <div class="fe" style="--rows-m:1;--rows-d:13;min-height:clamp(429px, 35.4vw, 700px)"></div>
 </section>
@@ -377,26 +427,26 @@ p:last-child{margin-bottom:0}
       </table>
     </div>
 
-    <div class="b b-img" style="--m:21/2/27/10;--d:1/11/17/26;--z:7" data-anim="fade">
+    <div class="b b-img" style="--m:21/2/27/10;--d:1/11/17/26;--z:7" data-anim="fade" data-zoom>
       <img style="object-position:71.58% 63.2%" src="assets/snap-02.webp" alt="The hotel's outdoor pool deck, lined with loungers and palms" loading="lazy" width="1800" height="1200">
     </div>
-    <div class="b b-img" style="--m:27/2/33/10;--d:17/11/31/26;--z:8" data-anim="fade">
+    <div class="b b-img" style="--m:27/2/33/10;--d:17/11/31/26;--z:8" data-anim="fade" data-zoom>
       <img src="assets/snap-03.webp" alt="Guestroom with two queen beds and a seating area" loading="lazy" width="1800" height="1200">
     </div>
-    <div class="b b-img b-fit" style="--m:15/2/21/10;--d:31/2/39/10;--z:9" data-anim="fade">
+    <div class="b b-img b-fit" style="--m:15/2/21/10;--d:31/2/39/10;--z:9" data-anim="fade" data-zoom>
       <img src="assets/snap-01.webp" alt="Exterior of the Ramada Venice Hotel Venezia" loading="lazy" width="1400" height="934">
     </div>
-    <div class="b b-img b-fit" style="--m:33/2/39/10;--d:31/10/39/18;--z:10" data-anim="fade">
+    <div class="b b-img b-fit" style="--m:33/2/39/10;--d:31/10/39/18;--z:10" data-anim="fade" data-zoom>
       <img src="assets/snap-04.webp" alt="Hotel lobby seating area" loading="lazy" width="1400" height="934">
     </div>
-    <div class="b b-img b-fit" style="--m:39/2/45/10;--d:31/18/39/26;--z:11" data-anim="fade">
+    <div class="b b-img b-fit" style="--m:39/2/45/10;--d:31/18/39/26;--z:11" data-anim="fade" data-zoom>
       <img src="assets/snap-05.webp" alt="The Wave Grille dining room" loading="lazy" width="1400" height="934">
     </div>
   </div>
 </section>
 
 <!-- ============================================ investment highlights plaque -->
-<section class="sec sec-banner sec-dark sec-bg" id="highlights"
+<section class="sec sec-banner sec-dark sec-bg sec-px" id="highlights" data-px="in"
          style="--bg:url('assets/highlights-banner.webp');--tint:.25">
   <div class="fe" style="--rows-m:7;--rows-d:19">
     <div class="b plaque" style="--m:5/2/8/10;--d:8/9/13/19;--z:0" data-anim="scale">
@@ -437,7 +487,7 @@ p:last-child{margin-bottom:0}
       <h3><strong>Exclusive Full-Service Offering with Extensive Meeting Space</strong></h3>
       <p>With over 10,500 square feet of flexible meeting and event space across eight rooms, the Ramada Venice Hotel Venezia stands as the only full-service lodging option within a 15-mile radius. The Property&rsquo;s flexible facilities can accommodate up to 1,050 guests for conferences or 850 guests for banquets, making it an attractive venue for corporate meetings, weddings, and social gatherings, capturing regional demand that has limited alternatives in the surrounding market.</p>
     </div>
-    <div class="b b-img" style="--m:6/2/12/10;--d:1/14/14/26;--z:4" data-anim="fade">
+    <div class="b b-img" style="--m:6/2/12/10;--d:1/14/14/26;--z:4" data-anim="fade" data-zoom>
       <img src="assets/meeting-space.webp" alt="Ballroom set for a banquet with round tables and a dance floor" loading="lazy" width="1600" height="1064">
     </div>
 
@@ -445,7 +495,7 @@ p:last-child{margin-bottom:0}
     <div class="b" style="--m:12/2/22/10;--d:14/2/27/26;--z:3">
       <div class="panel panel-light"></div>
     </div>
-    <div class="b b-img" style="--m:14/2/20/10;--d:14/2/27/14;--z:5" data-anim="fade">
+    <div class="b b-img" style="--m:14/2/20/10;--d:14/2/27/14;--z:5" data-anim="fade" data-zoom>
       <img src="assets/banquet.webp" alt="Event space arranged for a reception" loading="lazy" width="1600" height="1067">
     </div>
     <div class="b on-panel on-panel-ink" style="--m:20/2/22/10;--d:15/15/26/25;--z:4" data-anim="fade">
@@ -461,7 +511,7 @@ p:last-child{margin-bottom:0}
       <h3><strong>No New Full-Service Supply Underway</strong></h3>
       <p>The Sarasota/Beaches submarket has no full-service hotels with comparable meeting space under construction. With over 10,500 square feet of flexible event space, the Ramada Venice Hotel Venezia remains uniquely positioned in the market. While two select-service hotels are planned nearly 18 miles north in Sarasota, neither offers comparable facilities nor directly competes with the Property.</p>
     </div>
-    <div class="b b-img" style="--m:26/2/32/10;--d:27/14/40/26;--z:6" data-anim="fade">
+    <div class="b b-img" style="--m:26/2/32/10;--d:27/14/40/26;--z:6" data-anim="fade" data-zoom>
       <img src="assets/supply-aerial.webp" alt="Aerial view over the hotel and the surrounding Venice submarket" loading="lazy" width="1600" height="1067">
     </div>
 
@@ -469,7 +519,7 @@ p:last-child{margin-bottom:0}
     <div class="b" style="--m:32/2/42/10;--d:40/2/53/26;--z:5">
       <div class="panel panel-light"></div>
     </div>
-    <div class="b b-img" style="--m:34/2/40/10;--d:40/2/53/14;--z:7" data-anim="fade">
+    <div class="b b-img" style="--m:34/2/40/10;--d:40/2/53/14;--z:7" data-anim="fade" data-zoom>
       <img src="assets/snap-01.webp" alt="Exterior of the Ramada Venice Hotel Venezia" loading="lazy" width="1400" height="934">
     </div>
     <div class="b on-panel on-panel-ink" style="--m:40/2/42/10;--d:41/15/52/25;--z:6" data-anim="fade">
@@ -486,6 +536,11 @@ p:last-child{margin-bottom:0}
   </div>
 </section>
 </main>
+
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged photograph">
+  <button class="lightbox-close" type="button" aria-label="Close">&times;</button>
+  <img alt="">
+</dialog>
 
 <!-- ================================================================ footer -->
 <footer class="sec sec-footer sec-dark sec-tex" id="contact">
@@ -544,6 +599,86 @@ p:last-child{margin-bottom:0}
       io.disconnect();
       targets.forEach(function (el) { show(el, false); });
     }, 3000);
+  }
+
+  /* ---- background parallax ----
+     Two custom properties per section, read by .sec-px::before. Sections are
+     only touched while they are near the viewport, and the whole thing is
+     skipped under reduced motion, which leaves the layer at its neutral
+     scale(1) translate(0). */
+  var pxSections = [].slice.call(document.querySelectorAll('[data-px]'));
+  if (!reduce && pxSections.length) {
+    var TRAVEL = 0.12;   /* of section height */
+    var DEPTH  = 0.14;   /* scale swing */
+    var queued = false;
+
+    function parallax() {
+      queued = false;
+      var vh = window.innerHeight;
+      for (var i = 0; i < pxSections.length; i++) {
+        var sec = pxSections[i];
+        var r = sec.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) continue;
+
+        /* 0 as the section's top edge meets the viewport bottom,
+           1 as its bottom edge meets the viewport top. */
+        var p = (vh - r.top) / (vh + r.height);
+        p = p < 0 ? 0 : p > 1 ? 1 : p;
+
+        /* The layer drifts down as the page scrolls up, so it reads slower
+           than the page rather than pinned to it. */
+        sec.style.setProperty('--py', ((p - 0.5) * r.height * TRAVEL).toFixed(1) + 'px');
+        sec.style.setProperty('--pz',
+          (sec.getAttribute('data-px') === 'out' ? 1 + DEPTH - p * DEPTH
+                                                 : 1 + p * DEPTH).toFixed(4));
+      }
+    }
+    function onScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(parallax);
+    }
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    parallax();
+  }
+
+  /* ---- hover zoom and popout on the property and highlight photographs ---- */
+  var dlg = document.getElementById('lightbox');
+  var zoomables = [].slice.call(document.querySelectorAll('[data-zoom]'));
+  if (dlg && zoomables.length && typeof dlg.showModal === 'function') {
+    var dlgImg = dlg.querySelector('img');
+    var opener = null;
+    document.body.classList.add('js-zoom');
+
+    zoomables.forEach(function (el) {
+      var img = el.querySelector('img');
+      if (!img) return;
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', (img.alt || 'Photograph') + ' — enlarge');
+
+      function open() {
+        opener = el;
+        dlgImg.src = img.currentSrc || img.src;
+        dlgImg.alt = img.alt;
+        dlg.showModal();
+      }
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+    });
+
+    dlg.querySelector('.lightbox-close').addEventListener('click', function () { dlg.close(); });
+    /* <dialog> has no backdrop-click of its own; a click that lands on the
+       dialog box itself rather than on its children is a backdrop click. */
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    /* Drop the bitmap on close so the full-size image is not held in memory. */
+    dlg.addEventListener('close', function () {
+      dlgImg.removeAttribute('src');
+      if (opener) { opener.focus(); opener = null; }
+    });
   }
 
   /* ---- click-to-magnify on the demand map ---- */
