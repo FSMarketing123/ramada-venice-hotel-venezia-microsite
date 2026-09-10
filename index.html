@@ -311,11 +311,135 @@ p:last-child{margin-bottom:0}
 }
 .plaque h2{color:var(--crimson);text-align:center}
 
-/* --------------------------------------------------------- zoomable map */
-.zoom-wrap{overflow:hidden;cursor:zoom-in;touch-action:none;align-self:start}
-.zoom-wrap img{width:100%;height:auto;transition:transform .3s ease}
-.zoom-wrap.zoomed{cursor:zoom-out}
-.zoom-wrap.zoomed img{transform:scale(2)}
+
+/* ------------------------------------------------------- interactive map
+   Ported from the supplied React source (xx MAPS xx/Interactive Map) to plain
+   DOM, so it needs no build step or framework like the rest of the page. The
+   geometry helpers below are a direct translation of lib/map-geometry.ts; the
+   palette and type are the site's rather than the kit's. */
+/* The map panel carries the reference map's own aspect, so the component's
+   height follows its width and the base map fills the panel with no letterbox.
+   The legend is taken out of flow rather than made a grid column: as a grid
+   item its 18 cards are intrinsic content, and an auto row would size itself to
+   them — stretching the block to twice the panel's height and stranding the map
+   in dead space. Positioned, it contributes nothing to layout and simply fills
+   the height the panel sets, scrolling its own list. */
+.imap{position:relative;border:1px solid #d8e3e4;background:#deebec;overflow:hidden;
+  color:#252d31;font-size:14px;line-height:1.45}
+.imap-panel{aspect-ratio:1856/1334;min-height:620px;margin-right:352px}
+.imap button{font:inherit;cursor:pointer;font-family:inherit}
+.imap button:focus-visible,.imap-canvas:focus-visible{outline:3px solid var(--crimson);outline-offset:-3px}
+.imap button:disabled{cursor:default;opacity:.4}
+.imap .eyebrow{display:block;font-size:11px;letter-spacing:.13em;font-weight:600;color:#6d777d}
+
+/* ---- map panel ---- */
+.imap-panel{position:relative;overflow:hidden;background:#deebec;min-width:0;min-height:0}
+.imap-canvas{position:absolute;inset:0;overflow:hidden;cursor:default;touch-action:pan-y}
+.imap-canvas.can-pan{cursor:grab;touch-action:none}
+.imap-canvas.can-pan:active{cursor:grabbing}
+.imap-base{position:absolute;max-width:none;user-select:none;pointer-events:none}
+.imap-town{position:absolute;transform:translate(-50%,-50%);font-size:clamp(11px,1vw,15px);
+  font-weight:600;color:#80898c;text-align:center;max-width:130px;line-height:1.05;
+  text-shadow:0 1px 3px #fff,1px 0 #fff,-1px 0 #fff;pointer-events:none;white-space:pre-line}
+.imap-shield{position:absolute;transform:translate(-50%,-50%);width:29px;height:32px;
+  object-fit:contain;pointer-events:none}
+.imap-leaders{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+
+.imap-badge{position:absolute;transform:translate(-50%,-50%);padding:15px;background:var(--crimson);
+  border:2px solid #fff;border-radius:7px;box-shadow:0 4px 16px #25373b24;z-index:3}
+.imap-badge img{width:100%;height:100%;object-fit:contain}
+
+.imap-marker{position:absolute;transform:translate(-50%,-50%);width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:50%;
+  background:#30383b;color:#fff;font:700 18px/1 'Poppins',sans-serif;font-variant-numeric:tabular-nums;
+  padding:0;box-shadow:0 2px 3px #10242835;z-index:2;transition:background .15s,box-shadow .15s}
+.imap-marker:hover,.imap-marker.hovered,.imap-marker.selected{background:var(--crimson);z-index:5;
+  box-shadow:0 0 0 5px #cc1e412b,0 2px 6px #10242830}
+.imap-marker.selected{outline:2px solid var(--crimson);outline-offset:2px}
+.imap-marker.star{background:none;border:0;border-radius:0;color:var(--crimson);
+  width:48px;height:50px;font-size:50px;box-shadow:none;
+  text-shadow:0 1px 0 #fff,1px 0 0 #fff,-1px 0 0 #fff}
+.imap-marker.star:hover,.imap-marker.star.selected{filter:drop-shadow(0 0 4px #fff);outline:0;box-shadow:none}
+/* Pulse the active marker without moving its number or its hit area. */
+.imap-marker.selected::after,.imap-marker.hovered::after{content:"";position:absolute;inset:-6px;
+  border:2px solid var(--crimson);border-radius:50%;pointer-events:none;
+  animation:imap-pulse 1.8s ease-out infinite}
+.imap-marker.star::after{display:none}
+@keyframes imap-pulse{0%{transform:scale(.9);opacity:.75}75%,100%{transform:scale(1.65);opacity:0}}
+
+.imap-caption{position:absolute;top:20px;left:22px;background:#ffffffef;border:1px solid #e0e8e8;
+  border-radius:4px;padding:11px 13px;display:flex;align-items:center;gap:9px;
+  font-size:10px;font-weight:600;letter-spacing:.11em;pointer-events:none;z-index:4}
+.imap-dot{width:6px;height:6px;background:var(--crimson);border-radius:50%}
+.imap-tools{position:absolute;right:20px;top:20px;display:flex;flex-direction:column;
+  border:1px solid #d9e1e2;background:#fff;box-shadow:0 4px 18px #273b3912;border-radius:6px;padding:4px;z-index:4}
+.imap-tool{width:38px;height:38px;border:0;border-radius:3px;background:none;color:#293a3e;
+  display:grid;place-items:center}
+.imap-tool:hover:not(:disabled){background:#f2f6f6}
+.imap-tool svg{width:18px;height:18px;display:block}
+.imap-tool-div{height:1px;margin:3px 5px;background:#e5eaea}
+.imap-foot{position:absolute;bottom:14px;left:20px;right:20px;display:flex;justify-content:space-between;
+  pointer-events:none;color:#40545a;font-size:12px;z-index:4}
+.imap-foot>span{background:#fffffff0;padding:7px 10px;border-radius:4px;display:flex;align-items:center;gap:7px}
+
+.imap-card{position:absolute;bottom:62px;left:22px;right:22px;max-width:450px;display:flex;
+  align-items:center;gap:14px;padding:20px 42px 20px 17px;background:#fff;border-radius:7px;
+  box-shadow:0 6px 25px #16303826;border-top:3px solid var(--crimson);pointer-events:none;z-index:6}
+.imap-card[hidden]{display:none}
+.imap-card-num{flex:none;width:38px;height:38px;background:#30383b;color:#fff;display:flex;
+  align-items:center;justify-content:center;border-radius:50%;font:700 20px/1 'Poppins',sans-serif}
+.imap-card-num.red{background:var(--crimson)}
+.imap-card h4{margin:5px 0 0;font-size:17px;font-weight:600;line-height:1.3}
+.imap-card-close{position:absolute;right:7px;top:7px;width:30px;height:30px;padding:0;border:0;
+  background:none;color:#40545a;pointer-events:auto;display:grid;place-items:center}
+
+/* ---- legend ---- */
+.imap-legend{position:absolute;top:0;right:0;bottom:0;width:352px;background:#fff;
+  display:flex;flex-direction:column;min-height:0;border-left:1px solid #d8e3e4}
+.imap-legend-top{padding:22px 20px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.imap-legend-top h4{font-size:22px;margin:6px 0 0;font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.imap-count{flex:none;border:1px solid #f0c4ce;border-radius:50%;width:36px;height:36px;color:var(--crimson);
+  display:grid;place-items:center;font-size:14px}
+.imap-legend-head{background:var(--crimson);color:#fff;display:grid;grid-template-columns:40px 1fr;
+  gap:8px;padding:12px 20px;font-weight:600;font-size:13px}
+.imap-legend-head>span:first-child{text-align:center}
+.imap-legend-list{overflow:auto;scrollbar-width:thin;scrollbar-color:#d6b7bf transparent;flex:1;
+  min-height:0;padding:14px;background:#f3f6f6}
+.imap-row{position:relative;width:100%;min-height:70px;display:grid;grid-template-columns:36px minmax(0,1fr);
+  gap:12px;text-align:left;align-items:center;border:1px solid #e0e5e6;border-radius:10px;background:#fff;
+  margin:0 0 10px;padding:12px 14px;color:#30383b;font-size:14px;line-height:1.35;
+  box-shadow:0 2px 4px #273c3e06;transition:background .15s,border-color .15s}
+.imap-row:last-child{margin-bottom:0}
+.imap-row:hover,.imap-row.highlight{border-color:#e3a5b5;background:#fff5f7;box-shadow:0 3px 9px #7f163c10}
+.imap-row.active{border-color:var(--crimson);box-shadow:inset 3px 0 var(--crimson),0 3px 9px #7f163c10;padding-right:24px}
+.imap-num{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;
+  background:#30383b;color:#fff;font:700 16px/1 'Poppins',sans-serif;font-variant-numeric:tabular-nums}
+.imap-row:hover .imap-num,.imap-row.highlight .imap-num,.imap-row.active .imap-num{background:var(--crimson)}
+.imap-row-label{display:flex;flex-direction:column;gap:4px;font-weight:600;line-height:1.35;min-width:0}
+.imap-row-label small{font-size:12px;font-weight:300;color:#748087}
+.imap-row.hotel{border-color:#edc1cc;color:var(--crimson);font-weight:700;min-height:76px}
+.imap-row.hotel .imap-num{background:var(--crimson);font-size:26px}
+.imap-arrow{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:var(--crimson)}
+.imap-legend-bottom{padding:14px 20px 16px;border-top:1px solid #e8eded;display:flex;flex-direction:column;
+  gap:6px;font-size:12px;color:#515f65}
+.imap-legend-bottom small{color:#7b878c;font-size:12px;line-height:1.4}
+
+@media (max-width:1100px){.imap-panel{margin-right:300px}.imap-legend{width:300px}}
+@media (max-width:900px){
+  .imap-panel{aspect-ratio:auto;height:52vh;min-height:360px;margin-right:0}
+  .imap-legend{position:static;width:auto}
+  .imap-legend{border-left:0;border-top:1px solid #d8e3e4}
+  .imap-legend-list{overflow:visible;max-height:none}
+  .imap-caption{top:14px;left:14px;max-width:calc(100% - 90px)}
+  .imap-tools{right:14px;top:14px}
+  .imap-foot{left:14px;right:14px;font-size:11px}
+  .imap-card{bottom:55px;left:14px;right:14px;padding:15px 38px 15px 12px;gap:11px}
+  .imap-row{min-height:74px;font-size:15px}
+}
+@media (prefers-reduced-motion:reduce){
+  .imap-marker.selected::after,.imap-marker.hovered::after{animation:none;opacity:.4}
+  .imap-marker,.imap-row{transition:none}
+}
 
 /* ------------------------------------------------------------- animation
    The source fades and scales blocks in as they cross the viewport. The
@@ -334,7 +458,6 @@ p:last-child{margin-bottom:0}
   .js-anim [data-anim]{opacity:1;transform:none;transition:none}
   .btn{transition:none}
   .btn:hover{transform:none}
-  .zoom-wrap img{transition:none}
   .sec-px::before{transform:none}
   [data-zoom] img{transition:none}
   [data-zoom]:hover img,[data-zoom]:focus-visible img{transform:none}
@@ -457,7 +580,7 @@ p:last-child{margin-bottom:0}
 
 <!-- ==================================================== highlight — location -->
 <section class="sec sec-tex" id="hl-location">
-  <div class="fe" style="--rows-m:16;--rows-d:50">
+  <div class="fe" style="--rows-m:16;--rows-d:32">
     <div class="b" style="--m:1/2/5/10;--d:1/2/14/26;--z:1">
       <div class="panel panel-dark"></div>
     </div>
@@ -466,11 +589,45 @@ p:last-child{margin-bottom:0}
       <p>The Ramada Venice Hotel Venezia benefits from a highly visible and accessible location along U.S. Highway 41, just two miles from Venice&rsquo;s acclaimed Gulf beaches and less than ten minutes from Interstate 75. Venice, known as the &ldquo;Shark Tooth Capital of the World,&rdquo; attracts visitors year-round with its pristine beaches, historic MainStreet, vibrant arts community, and numerous golf courses. The Hotel is eight minutes north of Venice Municipal Airport and only 35 minutes from Sarasota&ndash;Bradenton International Airport (SRQ), which accommodated over four million passengers in 2024, a 116% increase compared to record setting 2019. The broader Sarasota region further enhances the area&rsquo;s appeal, offering renowned cultural institutions, outdoor recreation, and major sporting events such as the Atlanta Braves&rsquo; Spring Training at CoolToday Park, located 20 minutes from the Property.</p>
     </div>
 
-    <div class="b b-img b-fit" style="--m:5/2/11/10;--d:3/17/21/25;--z:4" data-anim="fade">
-      <img src="assets/demand-legend.webp" alt="Legend keying the numbered demand generators on the map below" loading="lazy" width="1100" height="1679">
-    </div>
-    <div class="b zoom-wrap" style="--m:11/2/17/10;--d:14/2/51/26;--z:3" id="demand-map" data-anim="fade">
-      <img src="assets/demand-map.webp" alt="Aerial map of Venice, Florida locating the Hotel against the area's leisure, healthcare and corporate demand generators. Click to magnify." loading="lazy" width="2500" height="2277">
+    <div class="b imap-block" style="--m:5/2/17/10;--d:14/2/32/26;--z:3" data-anim="fade">
+      <div class="imap">
+        <section class="imap-panel" aria-label="Interactive map of Venice demand drivers">
+          <div class="imap-canvas" id="imap-canvas" tabindex="0"
+               aria-label="Map of Venice, Florida. Select a marker to zoom to it. When zoomed in, drag or use the arrow keys to pan and the wheel to zoom. Plus and minus zoom, Escape resets.">
+            <img class="imap-base" src="assets/map-venice.webp" draggable="false"
+                 alt="Street and waterway map of Venice, Florida and the surrounding area">
+            <svg class="imap-leaders" aria-hidden="true"></svg>
+          </div>
+          <div class="imap-caption"><span class="imap-dot"></span>VENICE &amp; THE SURROUNDING AREA</div>
+          <div class="imap-tools">
+            <button class="imap-tool" type="button" data-imap="in" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button class="imap-tool" type="button" data-imap="out" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+            <div class="imap-tool-div"></div>
+            <button class="imap-tool" type="button" data-imap="reset" aria-label="Reset the map view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+          </div>
+          <div class="imap-foot">
+            <span id="imap-hint">Click a marker to zoom in</span>
+            <span id="imap-zoom">100%</span>
+          </div>
+          <div class="imap-card" id="imap-card" aria-live="polite" hidden>
+            <div class="imap-card-num" id="imap-card-num"></div>
+            <div><span class="eyebrow" id="imap-card-cat"></span><h4 id="imap-card-name"></h4></div>
+            <button class="imap-card-close" type="button" aria-label="Reset the map and clear the selection"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+        </section>
+        <aside class="imap-legend" aria-label="Demand drivers legend">
+          <div class="imap-legend-top">
+            <div><span class="eyebrow">EXPLORE THE AREA</span><h4>Demand drivers</h4></div>
+            <span class="imap-count">17</span>
+          </div>
+          <div class="imap-legend-head"><span>#</span><span>Demand Drivers</span></div>
+          <div class="imap-legend-list" id="imap-legend"></div>
+          <div class="imap-legend-bottom">
+            <span>Hover to preview. Click to zoom. Click again to reset.</span>
+            <small>Locations follow the supplied demand-driver map.</small>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -687,42 +844,331 @@ p:last-child{margin-bottom:0}
     });
   }
 
-  /* ---- click-to-magnify on the demand map ---- */
-  var wrap = document.getElementById('demand-map');
-  if (wrap) {
-    var img = wrap.querySelector('img');
-    var zoomed = false;
+  /* ---- interactive demand-driver map ----
+     Ported from the supplied React source. The geometry below is a direct
+     translation of lib/map-geometry.ts; everything else is the same interaction
+     model expressed against the DOM instead of React state. */
+  var canvas = document.getElementById('imap-canvas');
+  if (canvas) (function () {
+    var W = 1856, H = 1334;                 /* the reference map's coordinate space */
+    var places = [
+      [0,'Ramada Venice Hotel Venezia',312,408,'Subject property'],
+      [1,'Venice Beach',120,452,'Beach'],
+      [2,'Caspersen Beach',263,843,'Beach'],
+      [3,'Venice Municipal Airport',303,703,'Airport'],
+      [4,'Historic Downtown Venice, FL',255,461,'Historic district'],
+      [5,'1927 Historic Venice Train Depot',287,436,'Historic landmark'],
+      [6,'Venice Art Center Inc',227,511,'Arts & culture'],
+      [7,'Venice Performing Arts Center',274,511,'Arts & culture'],
+      [8,'Venice Fishing Pier',171,708,'Waterfront attraction'],
+      [9,'Venice Theatre',242,436,'Arts & culture'],
+      [10,'Sarasota Memorial Hospital – Venice',510,127,'Healthcare'],
+      [11,'Curry Creek Preserve',341,303,'Nature preserve'],
+      [12,'Clyde Butcher Venice Gallery & Studio',321,479,'Arts & culture'],
+      [13,'CoolToday Park',1284,1078,'Sports & entertainment'],
+      [14,'Amazon Warehouse',823,335,'Business & employment'],
+      [15,'Pelican Pointe Golf and Country Club',606,582,'Golf'],
+      [16,'Lake Venice Golf Club',248,784,'Golf'],
+      [17,'Capri Isles Golf Club',533,361,'Golf']
+    ].map(function (p) { return { id: p[0], name: p[1], x: p[2], y: p[3], category: p[4] }; });
+    var highways = [[129,83,41],[451,755,41],[1016,918,41],[1769,948,41],[999,362,75],[1718,459,75]];
+    var towns = [[184,143,'Laurel'],[313,272,'Nokomis'],[672,107,'NORTH VENICE'],[587,729,'Venice Gardens'],
+                 [950,739,'Plantation'],[391,909,'South Venice'],[1670,892,'Warm Mineral Springs']];
 
-    function origin(e) {
-      var r = img.getBoundingClientRect();
-      var pt = (e.touches && e.touches.length === 1) ? e.touches[0] : e;
-      if (typeof pt.clientX !== 'number') return;
-      img.style.transformOrigin =
-        (((pt.clientX - r.left) / r.width) * 100) + '% ' +
-        (((pt.clientY - r.top) / r.height) * 100) + '%';
+    var clamp = function (v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
+    var fitScale = function (b) { return Math.min(b.w / W, b.h / H); };
+
+    /* Centre the map on an axis it does not fill; never pan an edge into view. */
+    function boundCamera(c, b) {
+      var zoom = clamp(c.zoom, 1, 5), scale = fitScale(b) * zoom;
+      var lx = Math.max(0, (W * scale - b.w) / 2), ly = Math.max(0, (H * scale - b.h) / 2);
+      return { zoom: zoom, x: zoom === 1 ? 0 : clamp(c.x, -lx, lx), y: zoom === 1 ? 0 : clamp(c.y, -ly, ly) };
     }
-    function toggle(e) {
-      zoomed = !zoomed;
-      wrap.classList.toggle('zoomed', zoomed);
-      wrap.setAttribute('aria-pressed', String(zoomed));
-      if (zoomed) { origin(e); } else { img.style.transformOrigin = 'center center'; }
+    function zoomCamera(c, factor, b, pivot) {
+      pivot = pivot || { x: 0, y: 0 };
+      var zoom = clamp(c.zoom * factor, 1, 5), ratio = zoom / c.zoom;
+      return boundCamera({ zoom: zoom, x: pivot.x - (pivot.x - c.x) * ratio,
+                                       y: pivot.y - (pivot.y - c.y) * ratio }, b);
+    }
+    function focusCamera(place, b) {
+      var zoom = 3, scale = fitScale(b) * zoom;
+      return boundCamera({ zoom: zoom, x: -(place.x - W / 2) * scale, y: -(place.y - H / 2) * scale }, b);
+    }
+    /* Push overlapping pins apart so the dense coastal cluster stays readable. */
+    function spreadMarkers(anchors, b, logo) {
+      var pos = anchors.map(function (p) { return { id: p.id, left: p.left, top: p.top }; });
+      for (var pass = 0; pass < 240; pass++) {
+        var changed = false;
+        for (var i = 0; i < pos.length; i++) for (var j = i + 1; j < pos.length; j++) {
+          var a = pos[i], c = pos[j], dx = c.left - a.left, dy = c.top - a.top;
+          var d = Math.hypot(dx, dy), min = (a.id === 0 || c.id === 0) ? 49 : 44;
+          if (d < min - 0.01) {
+            changed = true;
+            var delta = (min - d) / ((a.id === 0 || c.id === 0) ? 1 : 2);
+            var ux = d === 0 ? 1 : dx / d, uy = d === 0 ? 0 : dy / d;
+            if (a.id !== 0) { a.left -= ux * delta; a.top -= uy * delta; }
+            if (c.id !== 0) { c.left += ux * delta; c.top += uy * delta; }
+          }
+        }
+        pos.forEach(function (p, i) {
+          var anchor = anchors[i];
+          if (p.id === 0 || anchor.left < 0 || anchor.left > b.w || anchor.top < 0 || anchor.top > b.h) return;
+          p.left = clamp(p.left, 23, b.w - 23);
+          p.top = clamp(p.top, 23, b.h - 23);
+          if (logo && Math.abs(p.left - logo.left) < logo.width / 2 + 26
+                   && Math.abs(p.top - logo.top) < logo.height / 2 + 26) {
+            var exits = [
+              { left: logo.left - logo.width / 2 - 26, top: p.top },
+              { left: logo.left + logo.width / 2 + 26, top: p.top },
+              { left: p.left, top: logo.top - logo.height / 2 - 26 },
+              { left: p.left, top: logo.top + logo.height / 2 + 26 }
+            ].filter(function (q) { return q.left >= 23 && q.left <= b.w - 23 && q.top >= 23 && q.top <= b.h - 23; });
+            exits.sort(function (m, n) {
+              return Math.hypot(m.left - p.left, m.top - p.top) - Math.hypot(n.left - p.left, n.top - p.top);
+            });
+            if (exits[0]) { p.left = exits[0].left; p.top = exits[0].top; changed = true; }
+          }
+        });
+        if (!changed) break;
+      }
+      return pos;
+    }
+    /* The callout belongs to the property, so it goes when its anchor leaves the board. */
+    function placeLogo(markers, b, width, height) {
+      var hotel = markers[0];
+      if (hotel.left < 0 || hotel.left > b.w || hotel.top < 0 || hotel.top > b.h) return null;
+      var pref = { left: hotel.left + width / 2 + 72, top: hotel.top + 40 };
+      var best = null, bestScore = Infinity;
+      for (var top = 74 + height / 2; top <= b.h - 56 - height / 2; top += 12) {
+        for (var left = 12 + width / 2; left <= b.w - 12 - width / 2; left += 12) {
+          var hit = markers.some(function (p) {
+            return Math.abs(p.left - left) < width / 2 + 30 && Math.abs(p.top - top) < height / 2 + 30;
+          });
+          if (hit) continue;
+          if (left + width / 2 > b.w - 78 && top - height / 2 < 180) continue;  /* keep the tools clear */
+          var score = Math.pow(left - pref.left, 2) + Math.pow(top - pref.top, 2);
+          if (score < bestScore) { bestScore = score; best = { left: left, top: top }; }
+        }
+      }
+      return best;
     }
 
-    /* Advertise the control only once the script that powers it is running. */
-    wrap.setAttribute('role', 'button');
-    wrap.setAttribute('tabindex', '0');
-    wrap.setAttribute('aria-pressed', 'false');
-    wrap.setAttribute('aria-label', 'Demand generator map — click to magnify');
+    var NS = 'http://www.w3.org/2000/svg';
+    var base = canvas.querySelector('.imap-base');
+    var leaders = canvas.querySelector('.imap-leaders');
+    var legendList = document.getElementById('imap-legend');
+    var card = document.getElementById('imap-card');
+    var zoomOut = document.querySelector('[data-imap="out"]');
+    var zoomIn = document.querySelector('[data-imap="in"]');
+    var board = { w: 1000, h: 780 };
+    var camera = { zoom: 1, x: 0, y: 0 };
+    var selected = null, hovered = null, drag = null;
 
-    wrap.addEventListener('click', toggle);
-    wrap.addEventListener('touchstart', toggle, { passive: true });
-    wrap.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); }
-      if (e.key === 'Escape' && zoomed) { toggle(e); }
+    /* ---- build the static furniture once ---- */
+    var townEls = towns.map(function (t) {
+      var el = document.createElement('span');
+      el.className = 'imap-town';
+      el.textContent = t[2];
+      canvas.appendChild(el);
+      return el;
     });
-    wrap.addEventListener('mousemove', function (e) { if (zoomed) origin(e); });
-    wrap.addEventListener('touchmove', function (e) { if (zoomed) origin(e); }, { passive: true });
-  }
+    var shieldEls = highways.map(function (h) {
+      var el = document.createElement('img');
+      el.className = 'imap-shield';
+      el.src = h[2] === 41 ? 'assets/map-us41.svg' : 'assets/map-i75.svg';
+      el.alt = h[2] === 41 ? 'US Route 41' : 'Interstate 75';
+      el.draggable = false;
+      canvas.appendChild(el);
+      return el;
+    });
+    var badge = document.createElement('button');
+    badge.type = 'button';
+    badge.className = 'imap-badge';
+    badge.setAttribute('aria-label', 'Select Ramada Venice Hotel Venezia');
+    badge.innerHTML = '<img src="assets/logo-venezia-white.svg" alt="">';
+    canvas.appendChild(badge);
+
+    var markerEls = places.map(function (p) {
+      var el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'imap-marker' + (p.id === 0 ? ' star' : '');
+      el.textContent = p.id === 0 ? '★' : String(p.id);
+      el.setAttribute('aria-label', (p.id === 0 ? 'Property' : String(p.id)) + ': ' + p.name);
+      canvas.appendChild(el);
+      return el;
+    });
+    var rowEls = places.map(function (p) {
+      var el = document.createElement('button');
+      el.type = 'button';
+      el.id = 'imap-row-' + p.id;
+      el.className = 'imap-row' + (p.id === 0 ? ' hotel' : '');
+      el.innerHTML = '<span class="imap-num">' + (p.id === 0 ? '★' : p.id) + '</span>'
+        + '<span class="imap-row-label"><span></span><small></small></span>';
+      el.querySelector('.imap-row-label > span').textContent = p.name;
+      el.querySelector('.imap-row-label small').textContent = p.category;
+      legendList.appendChild(el);
+      return el;
+    });
+
+    function setHover(id) { hovered = id; render(); }
+    function reset() { camera = { zoom: 1, x: 0, y: 0 }; selected = null; hovered = null; drag = null; render(); }
+    function zoomBy(f) { camera = zoomCamera(camera, f, board); render(); }
+    function select(id, fromLegend) {
+      if (selected === id) { reset(); return; }
+      selected = id;
+      camera = focusCamera(places[id], board);
+      render();
+      if (fromLegend) return;
+      /* Scroll the legend only, so the map stays put on a phone. */
+      var row = rowEls[id], list = row.parentElement;
+      if (list.scrollHeight > list.clientHeight) {
+        var r = row.getBoundingClientRect(), l = list.getBoundingClientRect();
+        if (r.top < l.top) list.scrollBy({ top: r.top - l.top - 8, behavior: 'smooth' });
+        else if (r.bottom > l.bottom) list.scrollBy({ top: r.bottom - l.bottom + 8, behavior: 'smooth' });
+      }
+    }
+
+    places.forEach(function (p, i) {
+      markerEls[i].addEventListener('click', function () { select(p.id, false); });
+      rowEls[i].addEventListener('click', function () { select(p.id, true); });
+      [markerEls[i], rowEls[i]].forEach(function (el) {
+        el.addEventListener('mouseenter', function () { setHover(p.id); });
+        el.addEventListener('mouseleave', function () { setHover(null); });
+        el.addEventListener('focus', function () { setHover(p.id); });
+        el.addEventListener('blur', function () { setHover(null); });
+      });
+    });
+    badge.addEventListener('click', function () { select(0, false); });
+    badge.addEventListener('mouseenter', function () { setHover(0); });
+    badge.addEventListener('mouseleave', function () { setHover(null); });
+    zoomIn.addEventListener('click', function () { zoomBy(1.3); });
+    zoomOut.addEventListener('click', function () { zoomBy(1 / 1.3); });
+    document.querySelector('[data-imap="reset"]').addEventListener('click', reset);
+    card.querySelector('.imap-card-close').addEventListener('click', reset);
+
+    canvas.addEventListener('keydown', function (e) {
+      if (e.target !== canvas) return;
+      var step = { ArrowLeft: [60, 0], ArrowRight: [-60, 0], ArrowUp: [0, 60], ArrowDown: [0, -60] }[e.key];
+      if (step) {
+        e.preventDefault();
+        camera = boundCamera({ zoom: camera.zoom, x: camera.x + step[0], y: camera.y + step[1] }, board);
+        render();
+      }
+      if (e.key === '+' || e.key === '=') zoomBy(1.3);
+      if (e.key === '-') zoomBy(1 / 1.3);
+      if (e.key === 'Escape') reset();
+    });
+    /* The wheel only belongs to the map once it is zoomed in; at 100% the page scrolls. */
+    canvas.addEventListener('wheel', function (e) {
+      if (camera.zoom <= 1) return;
+      e.preventDefault();
+      var r = canvas.getBoundingClientRect();
+      camera = zoomCamera(camera, Math.exp(-e.deltaY * 0.002), board,
+        { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2 });
+      render();
+    }, { passive: false });
+    canvas.addEventListener('pointerdown', function (e) {
+      if (camera.zoom <= 1 || e.target.closest('button')) return;
+      drag = { x: e.clientX, y: e.clientY, cx: camera.x, cy: camera.y };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      camera = boundCamera({ zoom: camera.zoom, x: drag.cx + e.clientX - drag.x,
+                                                y: drag.cy + e.clientY - drag.y }, board);
+      render();
+    });
+    canvas.addEventListener('pointerup', function () { drag = null; });
+    canvas.addEventListener('pointercancel', function () { drag = null; });
+
+    function render() {
+      var fit = fitScale(board), scale = fit * camera.zoom;
+      var ox = (board.w - W * scale) / 2 + camera.x, oy = (board.h - H * scale) / 2 + camera.y;
+      var pt = function (x, y) { return { left: ox + x * scale, top: oy + y * scale }; };
+
+      base.style.cssText = 'left:' + ox + 'px;top:' + oy + 'px;width:' + W * scale + 'px;height:' + H * scale + 'px';
+      towns.forEach(function (t, i) { var q = pt(t[0], t[1]); townEls[i].style.cssText = 'left:' + q.left + 'px;top:' + q.top + 'px'; });
+      highways.forEach(function (h, i) { var q = pt(h[0], h[1]); shieldEls[i].style.cssText = 'left:' + q.left + 'px;top:' + q.top + 'px'; });
+
+      var anchors = places.map(function (p) { var q = pt(p.x, p.y); return { id: p.id, left: q.left, top: q.top }; });
+      var pos = spreadMarkers(anchors, board);
+      var logoSize = board.w < 600 ? { width: 108, height: 116 } : { width: 138, height: 146 };
+      var logo = placeLogo(pos, board, logoSize.width, logoSize.height);
+      var hotel = anchors[0];
+      if (!logo && hotel.left >= 0 && hotel.left <= board.w && hotel.top >= 0 && hotel.top <= board.h) {
+        logo = { left: board.w - logoSize.width / 2 - 14, top: board.h - logoSize.height / 2 - 56 };
+        pos = spreadMarkers(anchors, board, { left: logo.left, top: logo.top, width: logoSize.width, height: logoSize.height });
+      }
+
+      while (leaders.firstChild) leaders.removeChild(leaders.firstChild);
+      if (logo) {
+        var lead = document.createElementNS(NS, 'path');
+        lead.setAttribute('d', 'M ' + hotel.left + ' ' + hotel.top + ' L ' + logo.left + ' ' + logo.top);
+        lead.setAttribute('fill', 'none');
+        lead.setAttribute('stroke', '#cc1e41');
+        lead.setAttribute('stroke-width', '2');
+        leaders.appendChild(lead);
+      }
+      places.forEach(function (p, i) {
+        var a = anchors[i], q = pos[i];
+        if (Math.hypot(q.left - a.left, q.top - a.top) < 2) return;
+        var line = document.createElementNS(NS, 'line');
+        line.setAttribute('x1', a.left); line.setAttribute('y1', a.top);
+        line.setAttribute('x2', q.left); line.setAttribute('y2', q.top);
+        line.setAttribute('stroke', '#58696d'); line.setAttribute('stroke-width', '1');
+        var dot = document.createElementNS(NS, 'circle');
+        dot.setAttribute('cx', a.left); dot.setAttribute('cy', a.top);
+        dot.setAttribute('r', '2'); dot.setAttribute('fill', '#58696d');
+        leaders.appendChild(line); leaders.appendChild(dot);
+      });
+
+      badge.hidden = !logo;
+      if (logo) {
+        badge.style.cssText = 'left:' + logo.left + 'px;top:' + logo.top + 'px;width:'
+          + logoSize.width + 'px;height:' + logoSize.height + 'px';
+        badge.setAttribute('aria-pressed', String(selected === 0));
+      }
+      places.forEach(function (p, i) {
+        var el = markerEls[i];
+        el.style.cssText = 'left:' + pos[i].left + 'px;top:' + pos[i].top + 'px';
+        el.classList.toggle('selected', selected === p.id);
+        el.classList.toggle('hovered', hovered === p.id);
+        el.setAttribute('aria-pressed', String(selected === p.id));
+        rowEls[i].classList.toggle('active', selected === p.id);
+        rowEls[i].classList.toggle('highlight', hovered === p.id);
+        rowEls[i].setAttribute('aria-pressed', String(selected === p.id));
+      });
+
+      canvas.classList.toggle('can-pan', camera.zoom > 1);
+      zoomIn.disabled = camera.zoom >= 5;
+      zoomOut.disabled = camera.zoom <= 1;
+      document.getElementById('imap-zoom').textContent = Math.round(camera.zoom * 100) + '%';
+      document.getElementById('imap-hint').textContent =
+        camera.zoom > 1 ? 'Drag to pan · Click again to reset' : 'Click a marker to zoom in';
+
+      var activeId = hovered !== null ? hovered : selected;
+      if (activeId === null) { card.hidden = true; }
+      else {
+        var a2 = places[activeId];
+        card.hidden = false;
+        var num = document.getElementById('imap-card-num');
+        num.textContent = a2.id === 0 ? '★' : String(a2.id);
+        num.classList.toggle('red', a2.id === 0);
+        document.getElementById('imap-card-cat').textContent = a2.category;
+        document.getElementById('imap-card-name').textContent = a2.name;
+      }
+    }
+
+    new ResizeObserver(function (entries) {
+      var r = entries[0].contentRect;
+      if (!r.width || !r.height) return;
+      board = { w: r.width, h: r.height };
+      camera = boundCamera(camera, board);
+      render();
+    }).observe(canvas);
+    render();
+  })();
+
 })();
 </script>
 </body>

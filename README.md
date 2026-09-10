@@ -258,9 +258,71 @@ click.
   applied **by the script**, so with JS off they stay plain images rather than
   lying about being buttons.
 
-`#hl-location`'s demand map is deliberately left on its own separate mechanism:
-it magnifies 2× in place about the pointer rather than popping out, because it
-is a wide exhibit that wants panning, not a photograph.
+`#hl-location`'s demand map is not part of this set — it is the interactive
+component described below and carries its own zoom, pan and selection.
+
+## Interactive demand-driver map
+
+`#hl-location` carries an interactive map in place of the two static exhibits it
+started with (`demand-map.webp` and `demand-legend.webp`, both deleted). Ported
+from the supplied React source in `../xx MAPS xx/Interactive Map/source` to plain
+DOM, so the page keeps its no-build-step, no-dependency shape.
+
+**The kit's iframe route was not used.** Its own README says the hosted map at
+`ramada-venezia-demand-map.se7entigers.chatgpt.site` still requires owner
+sign-in, so visitors would meet a login wall; it would also put a confidential
+offering behind a third-party domain. The kit anticipates this and ships the
+source for exactly this case.
+
+### What was ported verbatim
+
+`lib/map-geometry.ts` is translated function for function — `fitScale`,
+`boundCamera`, `zoomCamera`, `focusCamera`, `spreadMarkers`, `placeLogo` — along
+with all 18 places on the reference map's 1856 × 1334 coordinate space, the six
+highway shields and the seven town labels. Behaviour kept: marker and legend
+selection, hover preview cards, focus zoom to 300%, bounded panning that never
+exposes an edge, the active-marker pulse, click-again-to-reset, and the rule
+that the wheel is inert until the map is past 100%.
+
+### What changed
+
+- **React → DOM.** `lucide-react` icons became inline SVG and the `Button`
+  wrapper plain `<button>`s; there was no reason to pull in a framework for one
+  section.
+- **The kit's masthead is dropped.** It repeated the hotel lockup and a "Demand
+  drivers" title directly under the section's own heading panel. The legend
+  keeps its heading.
+- **Type and colour are the site's** — Poppins and `--crimson` (`#cc1e41`) in
+  place of Arial/Georgia and the kit's `#ce1741`.
+- **The badge uses the site's existing `logo-venezia-white.svg`.** The kit's
+  `hotel-logo.svg` has identical path data but carries a `#231f20` element;
+  reusing the site's copy keeps the badge matching the hero.
+
+### The one layout trap
+
+`.imap-legend` is **positioned, not a grid column**. As a grid item its 18 cards
+are intrinsic content, so an auto row sizes itself to them — which stretched the
+block to 1708px against the map panel's 708px and stranded the map in 500px of
+dead space top and bottom. Positioned, the legend contributes nothing to layout
+height, fills whatever the panel sets, and scrolls its own list.
+
+The panel takes `aspect-ratio: 1856/1334`, so the component's height follows its
+width and the base map fills the panel exactly — 985 × 708 at a 1440 viewport,
+no letterbox. `min-height: 620px` matches the kit's guidance for narrow
+desktops. Below 900px the panel switches to `52vh` (min 360) and the legend
+returns to flow beneath it, expanded rather than scrolling.
+
+### Assets
+
+| file | source | notes |
+|---|---|---|
+| `map-venice.webp` | `venice-map.jpg` 5500×3955, 8.1MB | 3200px q82, 469K |
+| `map-i75.svg` | `i-75.svg` | 432K → 9K |
+| `map-us41.svg` | `us-41.svg` | 422K → 4K |
+
+The three SVGs carried the same embedded Adobe PGF blob as the HWE and Venezia
+lockups did. 3200px keeps the base map sharp at the 5× ceiling, where it is
+displayed at roughly 4900px wide.
 
 ## Behaviour
 
