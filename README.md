@@ -396,6 +396,17 @@ The three SVGs carried the same embedded Adobe PGF blob as the HWE and Venezia
 lockups did. 3200px keeps the base map sharp at the 5× ceiling, where it is
 displayed at roughly 4900px wide.
 
+## Property snapshot table
+
+The label column is centred; values stay left. Rows highlight and lift 2% on
+hover, gated on `@media (hover:hover)` so the state does not latch on a tap.
+
+The table had to move from `border-collapse: collapse` to `separate`, with the
+rule between rows becoming a bottom border on the cells. A collapsed border is
+shared between adjacent rows and cannot move independently, so it tore away from
+the row as it scaled. Row heights and the table's 874px total are unchanged by
+the switch.
+
 ## Footer contacts
 
 Each group is a two-up: its rule spans both columns, then the pair sits on one
