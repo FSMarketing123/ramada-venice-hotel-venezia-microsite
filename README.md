@@ -431,15 +431,15 @@ the switch.
 ## Footer contacts
 
 Each group is a two-up: its rule spans both columns, then the pair sits on one
-row beneath it — Preston Reid beside Celina Nowicki, Michael Britvan beside Coby
-Campbell. That took the footer from 926px to 692px.
+row beneath it — Preston Reid beside Celina Nowicki. Michael Britvan is the
+only financing advisor, so that group has a single card in the left column.
 
 The one-column breakpoint is **1100px**, which is higher than it looks like it
-should be. `ccampbell@hodgeswardelliott.com` renders at 280px and an email
-address has no break opportunity, so a column narrower than that does not wrap
-it — it runs over whatever sits beside it. Two 284px columns plus the 40px
-gutter need a 608px contacts block, and the grid only reaches that at about a
-1100px viewport. `overflow-wrap: anywhere` on the address is the backstop.
+should be. The longest address, `mbritvan@hodgeswardelliott.com`, renders at
+267px and an email has no break opportunity, so a column narrower than that does
+not wrap it — it runs over whatever sits beside it. `overflow-wrap: anywhere` on
+the address is the backstop. The breakpoint was set against a 280px address that
+has since been removed, so it now carries more headroom than it strictly needs.
 
 Verified at 1440 (360px cards), 1101 (297px, the tightest two-up) and 1024
 (stacked).
