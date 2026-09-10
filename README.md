@@ -392,6 +392,16 @@ state immediately.
 
 ## #hl-location copy
 
+The dark band and the copy span the **same grid rows**, so the band is the copy's
+own height and nothing more. Giving the band a row above and below the copy —
+as it had — cost 114px between the band's edge and the first line of text: 40px
+for the spare row and its gutter, another 37px of centring slack because the
+copy is `align-self: center` in an area taller than its content, then the copy's
+own 37px padding. Sharing rows leaves only that padding, so the inset is 37px on
+desktop and 26px on a phone, symmetric top and bottom. It also fixed a mobile
+asymmetry: two spare rows sat above the copy there and none below it.
+
+
 The heading and the paragraph span the full panel rather than the left half —
 `--d:2/3/13/25` against the panel's `1/2/14/26`. That puts the measure at about
 1,150px at a 1440 viewport, roughly 155 characters a line, which is long for
