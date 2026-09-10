@@ -212,6 +212,21 @@ Squarespace `/s/` path, which will not exist once this is served from Pages.
   highlight. They were two separate uploads of a byte-identical file on the
   source; deduplicated here.
 
+## Hero masthead
+
+The hero's tint layer carries a gradient rather than a flat wash —
+`linear-gradient(180deg, rgba(90,110,156,100%), rgba(0,0,0,0) 35%)` at full
+opacity — so the masthead reads against colour instead of open sky. `#hero::after`
+out-specifies `.sec-bg::after` on the id alone, so it needs no `!important`.
+
+The two white hairlines flanking the HWE mark were in the markup from the start
+but **had never rendered level with it**. `.rule` carried `align-self: center`,
+and `align-self` only does anything on a flex or grid *item* — `.b` is a grid
+item but a block *container*, so the `<hr>` inside it stayed in normal flow at
+the top of its 149px cell, 74px above the logo it was meant to flank. The
+centring has to happen on the wrapper, which is what `.b-rule` does. The mark now
+sits level with both rules and 51px clear of each.
+
 ## Background parallax
 
 The hero, the divider band and `#highlights` drift and scale as they cross the

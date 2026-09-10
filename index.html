@@ -100,6 +100,13 @@ p:last-child{margin-bottom:0}
   background-position:var(--bg-pos, 50% 50%);
 }
 .sec-bg::after{background:var(--ink);opacity:var(--tint, 0)}
+/* The hero's tint is a gradient rather than a flat wash: solid at the top,
+   gone by 35% down, so the masthead reads against colour instead of open sky.
+   The id out-specifies .sec-bg::after on its own, so no !important is needed. */
+#hero::after{
+  opacity:1;
+  background:linear-gradient(180deg, rgba(90, 110, 156, 100%), rgba(0, 0, 0, 0) 35%);
+}
 
 /* ---------------------------------------------------------------- parallax
    The photograph lives on .sec-bg::before, and a pseudo-element cannot be
@@ -250,7 +257,11 @@ p:last-child{margin-bottom:0}
 .on-panel p{margin:16px 0 0}
 
 /* --------------------------------------------------------------- masthead */
-.rule{border:0;border-top:1px solid rgba(255,255,255,.85);width:100%;margin:0;align-self:center}
+/* .b is a grid item but a block container, so align-self on the <hr> inside it
+   did nothing and the rules sat at the top of their 149px cell — 74px above the
+   logo they are meant to flank. The wrapper has to do the centring. */
+.b-rule{display:flex;align-items:center}
+.rule{border:0;border-top:1px solid rgba(255,255,255,.85);width:100%;margin:0}
 .b-hwe{display:flex;align-items:center;justify-content:center;padding:40px}
 .b-hwe img{width:100%;max-width:250px}
 .b-lockup{display:flex;align-items:center;justify-content:center}
@@ -548,11 +559,11 @@ p:last-child{margin-bottom:0}
 <section class="sec sec-hero sec-dark sec-bg sec-px" id="hero" data-px="out"
          style="--bg:url('assets/hero-pool.webp')">
   <div class="fe" style="--rows-m:16;--rows-d:28">
-    <div class="b" style="--m:1/2/2/10;--d:1/1/5/12;--z:2"><hr class="rule"></div>
+    <div class="b b-rule" style="--m:1/2/2/10;--d:1/1/5/12;--z:2"><hr class="rule"></div>
     <div class="b b-hwe" style="--m:2/2/8/10;--d:1/12/5/16;--z:1">
       <img src="assets/hwe-white.svg" alt="Hodges Ward Elliott" width="250" height="96">
     </div>
-    <div class="b" style="--m:8/2/9/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
+    <div class="b b-rule" style="--m:8/2/9/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
 
     <div class="b" style="--m:9/2/17/10;--d:8/11/17/17;--z:5">
       <div class="panel panel-crimson-84"></div>
