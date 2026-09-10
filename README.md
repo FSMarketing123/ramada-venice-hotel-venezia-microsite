@@ -431,15 +431,15 @@ the switch.
 ## Footer contacts
 
 Each group is a two-up: its rule spans both columns, then the pair sits on one
-row beneath it — Preston Reid beside Celina Nowicki. Michael Britvan is the
-only financing advisor, so that group has a single card in the left column.
+row beneath it. Exclusive Representatives holds three — Preston Reid beside Kyle
+Sahlsten, then Celina Nowicki on the next row — and Michael Britvan is the only
+financing advisor, so that group has a single card in the left column.
 
 The one-column breakpoint is **1100px**, which is higher than it looks like it
-should be. The longest address, `mbritvan@hodgeswardelliott.com`, renders at
-267px and an email has no break opportunity, so a column narrower than that does
-not wrap it — it runs over whatever sits beside it. `overflow-wrap: anywhere` on
-the address is the backstop. The breakpoint was set against a 280px address that
-has since been removed, so it now carries more headroom than it strictly needs.
+should be. The longest address, `ksahlsten@hodgeswardelliott.com`, renders at
+269px and an email has no break opportunity, so a column narrower than that does
+not wrap it — it runs over whatever sits beside it. At the breakpoint the column
+is 297px, leaving 28px in hand. `overflow-wrap: anywhere` is the backstop.
 
 Verified at 1440 (360px cards), 1101 (297px, the tightest two-up) and 1024
 (stacked).

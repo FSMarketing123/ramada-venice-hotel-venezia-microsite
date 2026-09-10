@@ -343,10 +343,9 @@ p:last-child{margin-bottom:0}
   font-size:16px;font-weight:300;line-height:1.5;letter-spacing:1.6px;text-transform:uppercase;
 }
 /* One column once a pair would squeeze the longest address. That address —
-   mbritvan@hodgeswardelliott.com — is 267px, and an email has no break
+   ksahlsten@hodgeswardelliott.com — is 269px, and an email has no break
    opportunity, so a narrower column does not wrap it, it overlaps the neighbour.
-   Two 271px columns plus the 40px gutter need a 582px block; 1100px is kept as
-   the breakpoint, which now carries more headroom than it needs. */
+   At the 1100px breakpoint the column is 297px, so there is 28px in hand. */
 @media (max-width:1100px){.contacts-group{grid-template-columns:1fr}}
 .contact{max-width:360px;margin:0;font-size:15.2px;line-height:1.25;letter-spacing:.304px}
 .contact b{font-weight:700}
@@ -785,6 +784,7 @@ p:last-child{margin-bottom:0}
         <section class="contacts-group" aria-labelledby="reps">
           <p class="contacts-header" id="reps">Exclusive Representatives</p>
           <div class="contact"><b>Preston Reid</b><br>Managing Director<br><a href="mailto:preid@hodgeswardelliott.com">preid@hodgeswardelliott.com</a></div>
+        <div class="contact"><b>Kyle Sahlsten</b><br>Senior Director<br><a href="mailto:ksahlsten@hodgeswardelliott.com">ksahlsten@hodgeswardelliott.com</a></div>
           <div class="contact"><b>Celina Nowicki</b><br>Associate<br><a href="mailto:cnowicki@hodgeswardelliott.com">cnowicki@hodgeswardelliott.com</a></div>
         </section>
         <section class="contacts-group" aria-labelledby="fin">
