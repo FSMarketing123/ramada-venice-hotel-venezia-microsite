@@ -398,8 +398,8 @@ displayed at roughly 4900px wide.
 
 ## Property snapshot table
 
-The label column is centred; values stay left. Rows highlight and lift 2% on
-hover, gated on `@media (hover:hover)` so the state does not latch on a tap.
+Both columns are left-aligned. Rows highlight and lift 2% on hover, gated on
+`@media (hover:hover)` so the state does not latch on a tap.
 
 The table had to move from `border-collapse: collapse` to `separate`, with the
 rule between rows becoming a bottom border on the cells. A collapsed border is
