@@ -411,6 +411,11 @@ steps down on mobile. The label cell's padding is symmetric (`8px`) rather than
 the source's `10px/7px`, so the block centres against the cell rather than
 against a content box the uneven padding has already shifted.
 
+The label cell is `vertical-align: middle` while the values stay `top`. Address,
+Amenities, Parking and Brand all have values that run to two, three or four
+lines, and a one-word label pinned to the top of a 151px row reads as misaligned
+against the list beside it.
+
 Rows highlight and lift 2% on hover, gated on `@media (hover:hover)` so the
 state does not latch on a tap.
 

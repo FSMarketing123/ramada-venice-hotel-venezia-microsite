@@ -298,7 +298,11 @@ p:last-child{margin-bottom:0}
    over three lines rather than two. */
 /* Symmetric padding here so margin-inline:auto centres the block against the
    cell, not against a content box the 10/7 padding has already shifted. */
-.prop-table td.pbold{width:207px;max-width:54%;padding-left:8px;padding-right:8px}
+/* vertical-align:middle only on the label: the values stay top-aligned, which
+   is what the Amenities list wants, but a one-word label should sit against the
+   middle of a row its value has made two or three lines tall. */
+.prop-table td.pbold{width:207px;max-width:54%;padding-left:8px;padding-right:8px;
+  vertical-align:middle}
 /* Labels read left-aligned but sit centred as a group: the span is the width of
    the widest label ("Food & Beverage", 147.7px at 16px) so every label shares
    one left edge, and margin-inline:auto centres that block in the cell. 9.4em
