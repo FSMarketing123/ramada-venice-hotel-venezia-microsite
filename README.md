@@ -237,7 +237,10 @@ The mark is capped at `74px` — half what its four columns would give it — so
 sits clear of both rules, 54px either side, rather than running up to them.
 
 The red band is six of the eight columns and seven rows rather than the full
-width: 245 × 234 at a 375px viewport, against 330 × 304 before. The lockup was
+width: 245 × 234 at a 375px viewport, against 330 × 304 before. It starts a row
+earlier than the masthead's spare row would put it, and the hero runs 15 rows
+rather than 12, which leaves the band centred in a 514px hero — 140px of
+photograph above it and 140 below. The lockup was
 `min(100%, 300px)` inside that full-width band, edge to edge, which read as
 uncentred because it had no margin to be centred within. At `min(82%, 200px)`
 against the narrower band it lands on the 200px cap with about 22px of red
