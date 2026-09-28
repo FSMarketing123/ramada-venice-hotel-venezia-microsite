@@ -545,11 +545,16 @@ p:last-child{margin-bottom:0}
 @media (max-width:767px){
   .on-panel{padding:8% 7%}
   /* The masthead keeps the desktop arrangement — rule, mark, rule on one row —
-     so the mark sits in four of the eight columns and needs a tighter inset. */
+     so the mark sits in four of the eight columns and needs a tighter inset.
+     The mark itself is capped at half the width the block would give it, which
+     leaves it sitting clear of both rules rather than running up to them. */
   .b-hwe{padding:10px 6px}
-  /* At min(100%,300px) the lockup was 300px inside a 330px band, edge to edge.
-     This leaves it margin on all four sides. */
-  .b-lockup img{width:min(62%, 200px)}
+  .b-hwe img{max-width:74px}
+  /* The band is six of the eight columns here, not all eight, so the percentage
+     is against a narrower box than it looks: 82% of ~245px lands on the 200px
+     cap and leaves roughly 22px of red around the mark, which is the proportion
+     the desktop band has. */
+  .b-lockup img{width:min(82%, 200px)}
   .prop-table td{font-size:15px;padding:12px 6px 12px 8px}
   .prop-table ul{padding-left:22px}
 }
@@ -562,17 +567,17 @@ p:last-child{margin-bottom:0}
 <!-- ======================================================== hero / masthead -->
 <section class="sec sec-hero sec-dark sec-bg sec-px" id="hero" data-px="out"
          style="--bg:url('assets/hero-pool.webp')">
-  <div class="fe" style="--rows-m:14;--rows-d:28">
+  <div class="fe" style="--rows-m:12;--rows-d:28">
     <div class="b b-rule" style="--m:1/2/5/4;--d:1/1/5/12;--z:2"><hr class="rule"></div>
     <div class="b b-hwe" style="--m:1/4/5/8;--d:1/12/5/16;--z:1">
       <img src="assets/hwe-white.svg" alt="Hodges Ward Elliott" width="250" height="96">
     </div>
     <div class="b b-rule" style="--m:1/8/5/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
 
-    <div class="b" style="--m:6/2/15/10;--d:8/11/17/17;--z:5">
+    <div class="b" style="--m:6/3/13/9;--d:8/11/17/17;--z:5">
       <div class="panel panel-crimson-84"></div>
     </div>
-    <div class="b b-lockup" style="--m:6/2/15/10;--d:8/11/17/17;--z:6">
+    <div class="b b-lockup" style="--m:6/3/13/9;--d:8/11/17/17;--z:6">
       <img src="assets/logo-venezia-white.svg" alt="Ramada by Wyndham — Hotel Venezia" width="300" height="293">
     </div>
   </div>

@@ -233,10 +233,15 @@ The mobile hero used to stack the two rules as full-width dividers above and
 below the mark. It now keeps the desktop arrangement — rule, mark, rule on one
 row — with the mark in four of the eight columns and the rules in two each.
 
-The lockup was `min(100%, 300px)` inside a 330px band, edge to edge, which read
-as uncentred because it had no margin to be centred within. It is
-`min(62%, 200px)` under 768px: 200 × 195 with 65px either side and 54 above and
-below at a 375px viewport.
+The mark is capped at `74px` — half what its four columns would give it — so it
+sits clear of both rules, 54px either side, rather than running up to them.
+
+The red band is six of the eight columns and seven rows rather than the full
+width: 245 × 234 at a 375px viewport, against 330 × 304 before. The lockup was
+`min(100%, 300px)` inside that full-width band, edge to edge, which read as
+uncentred because it had no margin to be centred within. At `min(82%, 200px)`
+against the narrower band it lands on the 200px cap with about 22px of red
+around it — the proportion the desktop band has.
 
 Both CA buttons spanned four of eight columns, so "Download Confidentiality
 Agreement" broke over four lines in a 160px box. They take the full content
