@@ -227,6 +227,21 @@ the top of its 149px cell, 74px above the logo it was meant to flank. The
 centring has to happen on the wrapper, which is what `.b-rule` does. The mark now
 sits level with both rules and 51px clear of each.
 
+### Mobile masthead
+
+The mobile hero used to stack the two rules as full-width dividers above and
+below the mark. It now keeps the desktop arrangement — rule, mark, rule on one
+row — with the mark in four of the eight columns and the rules in two each.
+
+The lockup was `min(100%, 300px)` inside a 330px band, edge to edge, which read
+as uncentred because it had no margin to be centred within. It is
+`min(62%, 200px)` under 768px: 200 × 195 with 65px either side and 54 above and
+below at a 375px viewport.
+
+Both CA buttons spanned four of eight columns, so "Download Confidentiality
+Agreement" broke over four lines in a 160px box. They take the full content
+width now — Sign on one line, Download on two.
+
 ## Background parallax
 
 The hero, the divider band and `#highlights` drift and scale as they cross the

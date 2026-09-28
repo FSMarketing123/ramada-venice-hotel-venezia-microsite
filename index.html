@@ -544,7 +544,12 @@ p:last-child{margin-bottom:0}
    panels are re-spanned over their own copy below. See README.md. */
 @media (max-width:767px){
   .on-panel{padding:8% 7%}
-  .b-hwe{padding:24px}
+  /* The masthead keeps the desktop arrangement — rule, mark, rule on one row —
+     so the mark sits in four of the eight columns and needs a tighter inset. */
+  .b-hwe{padding:10px 6px}
+  /* At min(100%,300px) the lockup was 300px inside a 330px band, edge to edge.
+     This leaves it margin on all four sides. */
+  .b-lockup img{width:min(62%, 200px)}
   .prop-table td{font-size:15px;padding:12px 6px 12px 8px}
   .prop-table ul{padding-left:22px}
 }
@@ -557,17 +562,17 @@ p:last-child{margin-bottom:0}
 <!-- ======================================================== hero / masthead -->
 <section class="sec sec-hero sec-dark sec-bg sec-px" id="hero" data-px="out"
          style="--bg:url('assets/hero-pool.webp')">
-  <div class="fe" style="--rows-m:16;--rows-d:28">
-    <div class="b b-rule" style="--m:1/2/2/10;--d:1/1/5/12;--z:2"><hr class="rule"></div>
-    <div class="b b-hwe" style="--m:2/2/8/10;--d:1/12/5/16;--z:1">
+  <div class="fe" style="--rows-m:14;--rows-d:28">
+    <div class="b b-rule" style="--m:1/2/5/4;--d:1/1/5/12;--z:2"><hr class="rule"></div>
+    <div class="b b-hwe" style="--m:1/4/5/8;--d:1/12/5/16;--z:1">
       <img src="assets/hwe-white.svg" alt="Hodges Ward Elliott" width="250" height="96">
     </div>
-    <div class="b b-rule" style="--m:8/2/9/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
+    <div class="b b-rule" style="--m:1/8/5/10;--d:1/16/5/27;--z:4"><hr class="rule"></div>
 
-    <div class="b" style="--m:9/2/17/10;--d:8/11/17/17;--z:5">
+    <div class="b" style="--m:6/2/15/10;--d:8/11/17/17;--z:5">
       <div class="panel panel-crimson-84"></div>
     </div>
-    <div class="b b-lockup" style="--m:9/2/17/10;--d:8/11/17/17;--z:6">
+    <div class="b b-lockup" style="--m:6/2/15/10;--d:8/11/17/17;--z:6">
       <img src="assets/logo-venezia-white.svg" alt="Ramada by Wyndham — Hotel Venezia" width="300" height="293">
     </div>
   </div>
@@ -579,10 +584,10 @@ p:last-child{margin-bottom:0}
     <div class="b" style="--m:1/2/8/10;--d:3/6/7/22;--z:0" data-anim="fade">
       <p style="text-align:center">Hodges Ward Elliott (&ldquo;HWE&rdquo;) has been exclusively retained to offer for sale the <strong>Ramada Venice Hotel Venezia</strong> (the &ldquo;Hotel&rdquo; or &ldquo;Property&rdquo;), a <strong>146-key full-service hotel</strong> featuring <strong>over 10,500 square feet of flexible meeting and event space</strong> in the heart of Venice, Florida. Positioned on 5.6 acres along U.S. Highway 41, the Property offers excellent visibility and convenient access to Interstate 75 and Sarasota&ndash;Bradenton International Airport (SRQ). Just two miles from Venice&rsquo;s acclaimed Gulf beaches, the Hotel is ideally situated to capture demand from historic downtown Venice and South Sarasota&rsquo;s leisure, healthcare, and corporate sectors.</p>
     </div>
-    <div class="b" style="--m:8/2/10/6;--d:8/7/10/13;--z:1" data-anim="fade">
+    <div class="b" style="--m:8/2/10/10;--d:8/7/10/13;--z:1" data-anim="fade">
       <a class="btn" href="https://secure.rightsignature.com/templates/a8360ae7-2340-414e-860a-56303bbf81ae/template-signer-link/4163d5d0c4a3346a57607b79e2631e57">Sign Confidentiality Agreement</a>
     </div>
-    <div class="b" style="--m:10/2/12/6;--d:8/15/10/21;--z:2" data-anim="fade">
+    <div class="b" style="--m:10/2/12/10;--d:8/15/10/21;--z:2" data-anim="fade">
       <a class="btn" href="assets/Ramada-Venice-Hotel-Venezia-CA.docx" download>Download Confidentiality Agreement</a>
     </div>
   </div>
@@ -756,10 +761,10 @@ p:last-child{margin-bottom:0}
       <p>The Property is offered fee simple and free and clear of existing management and financing, affording new ownership maximum optionality in the future operation and capitalization of the Hotel.</p>
     </div>
 
-    <div class="b" style="--m:42/2/44/6;--d:57/7/59/13;--z:2" data-anim="fade">
+    <div class="b" style="--m:42/2/44/10;--d:57/7/59/13;--z:2" data-anim="fade">
       <a class="btn" href="https://secure.rightsignature.com/templates/a8360ae7-2340-414e-860a-56303bbf81ae/template-signer-link/4163d5d0c4a3346a57607b79e2631e57">Sign Confidentiality Agreement</a>
     </div>
-    <div class="b" style="--m:44/2/46/6;--d:57/15/59/21;--z:3" data-anim="fade">
+    <div class="b" style="--m:44/2/46/10;--d:57/15/59/21;--z:3" data-anim="fade">
       <a class="btn" href="assets/Ramada-Venice-Hotel-Venezia-CA.docx" download>Download Confidentiality Agreement</a>
     </div>
   </div>
